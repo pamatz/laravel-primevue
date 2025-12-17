@@ -1,13 +1,41 @@
 <script setup lang="ts">
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import { Head, Form } from '@inertiajs/vue3';
-import { store } from '@/routes/login';
+import { Head, router, usePage } from '@inertiajs/vue3';
+import { login } from '@/routes';
+import FormFieldError from '@/components/FormFieldError.vue';
+import { computed, ref } from 'vue';
+import { loginResolver } from '@/validation/login';
 
 const props = defineProps<{
     status?: string;
     canResetPassword: boolean;
     canRegister: boolean;
 }>();
+
+const initialValues = {
+    email: '',
+    password: '',
+    remember: false,
+};
+
+const isSubmitting = ref(false);
+
+const page = usePage<any>();
+const errors = computed<Record<string, string>>(
+    () => (page.props?.errors as Record<string, string>) ?? {},
+);
+
+const onSubmit = (event: any): void => {
+    const values = event?.values ?? event ?? {};
+
+    isSubmitting.value = true;
+
+    router.post(login(), values, {
+        onFinish: () => {
+            isSubmitting.value = false;
+        },
+    });
+};
 </script>
 
 <template>
@@ -23,10 +51,12 @@ const props = defineProps<{
             </Message>
         </div>
 
-        <Form
-            v-bind="store.form()"
+        <PvForm
+            v-slot="$form"
+            :initialValues="initialValues"
+            :resolver="loginResolver"
             class="flex flex-col gap-4"
-            v-slot="{ errors, processing }"
+            @submit="onSubmit"
         >
             <div class="flex flex-col gap-2">
                 <label
@@ -43,12 +73,11 @@ const props = defineProps<{
                     autofocus
                     class="w-full"
                 />
-                <small
-                    v-if="errors.email"
-                    class="text-xs text-red-600 dark:text-red-400"
-                >
-                    {{ errors.email }}
-                </small>
+                <FormFieldError
+                    field="email"
+                    :form="$form"
+                    :errors="errors"
+                />
             </div>
 
             <div class="flex flex-col gap-2">
@@ -67,12 +96,11 @@ const props = defineProps<{
                     class="w-full"
                     inputClass="w-full"
                 />
-                <small
-                    v-if="errors.password"
-                    class="text-xs text-red-600 dark:text-red-400"
-                >
-                    {{ errors.password }}
-                </small>
+                <FormFieldError
+                    field="password"
+                    :form="$form"
+                    :errors="errors"
+                />
             </div>
 
             <div
@@ -101,7 +129,7 @@ const props = defineProps<{
                 type="submit"
                 label="Iniciar sesión"
                 class="w-full mt-2"
-                :loading="processing"
+                :loading="isSubmitting"
             />
 
             <p
@@ -116,6 +144,6 @@ const props = defineProps<{
                     Crear una cuenta
                 </a>
             </p>
-        </Form>
+        </PvForm>
     </AuthLayout>
 </template>

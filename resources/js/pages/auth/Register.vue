@@ -1,14 +1,38 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
+import FormFieldError from '@/components/FormFieldError.vue';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import { Form, Head } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import { registerResolver } from '@/validation/register';
+
+const initialValues = {
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+};
+
+const isSubmitting = ref(false);
+
+const page = usePage<any>();
+const errors = computed<Record<string, string>>(
+    () => (page.props?.errors as Record<string, string>) ?? {},
+);
+
+const onSubmit = (event: any): void => {
+    const values = event?.values ?? event ?? {};
+
+    isSubmitting.value = true;
+
+    router.post(store(), values, {
+        onFinish: () => {
+            isSubmitting.value = false;
+        },
+    });
+};
 </script>
 
 <template>
@@ -18,16 +42,22 @@ import { Form, Head } from '@inertiajs/vue3';
     >
         <Head title="Register" />
 
-        <Form
-            v-bind="store.form()"
-            :reset-on-success="['password', 'password_confirmation']"
-            v-slot="{ errors, processing }"
+        <PvForm
+            v-slot="$form"
+            :initialValues="initialValues"
+            :resolver="registerResolver"
             class="flex flex-col gap-6"
+            @submit="onSubmit"
         >
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="name">Name</Label>
-                    <Input
+                    <label
+                        for="name"
+                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                    >
+                        Name
+                    </label>
+                    <InputText
                         id="name"
                         type="text"
                         required
@@ -36,13 +66,23 @@ import { Form, Head } from '@inertiajs/vue3';
                         autocomplete="name"
                         name="name"
                         placeholder="Full name"
+                        class="w-full"
                     />
-                    <InputError :message="errors.name" />
+                    <FormFieldError
+                        field="name"
+                        :form="$form"
+                        :errors="errors"
+                    />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
-                    <Input
+                    <label
+                        for="email"
+                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                    >
+                        Email address
+                    </label>
+                    <InputText
                         id="email"
                         type="email"
                         required
@@ -50,13 +90,23 @@ import { Form, Head } from '@inertiajs/vue3';
                         autocomplete="email"
                         name="email"
                         placeholder="email@example.com"
+                        class="w-full"
                     />
-                    <InputError :message="errors.email" />
+                    <FormFieldError
+                        field="email"
+                        :form="$form"
+                        :errors="errors"
+                    />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password">Password</Label>
-                    <Input
+                    <label
+                        for="password"
+                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                    >
+                        Password
+                    </label>
+                    <Password
                         id="password"
                         type="password"
                         required
@@ -64,13 +114,26 @@ import { Form, Head } from '@inertiajs/vue3';
                         autocomplete="new-password"
                         name="password"
                         placeholder="Password"
+                        class="w-full"
+                        inputClass="w-full"
+                        toggleMask
+                        :feedback="false"
                     />
-                    <InputError :message="errors.password" />
+                    <FormFieldError
+                        field="password"
+                        :form="$form"
+                        :errors="errors"
+                    />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password_confirmation">Confirm password</Label>
-                    <Input
+                    <label
+                        for="password_confirmation"
+                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                    >
+                        Confirm password
+                    </label>
+                    <Password
                         id="password_confirmation"
                         type="password"
                         required
@@ -78,18 +141,25 @@ import { Form, Head } from '@inertiajs/vue3';
                         autocomplete="new-password"
                         name="password_confirmation"
                         placeholder="Confirm password"
+                        class="w-full"
+                        inputClass="w-full"
+                        toggleMask
+                        :feedback="false"
                     />
-                    <InputError :message="errors.password_confirmation" />
+                    <FormFieldError
+                        field="password_confirmation"
+                        :form="$form"
+                        :errors="errors"
+                    />
                 </div>
 
                 <Button
                     type="submit"
                     class="mt-2 w-full"
                     tabindex="5"
-                    :disabled="processing"
+                    :loading="isSubmitting"
                     data-test="register-user-button"
                 >
-                    <Spinner v-if="processing" />
                     Create account
                 </Button>
             </div>
@@ -103,6 +173,6 @@ import { Form, Head } from '@inertiajs/vue3';
                     >Log in</TextLink
                 >
             </div>
-        </Form>
+        </PvForm>
     </AuthBase>
 </template>

@@ -1,18 +1,38 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
-import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import FormFieldError from '@/components/FormFieldError.vue';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { login } from '@/routes';
-import { email } from '@/routes/password';
-import { Form, Head } from '@inertiajs/vue3';
+import { email as passwordEmail } from '@/routes/password';
+import { computed, ref } from 'vue';
+import { forgotPasswordResolver } from '@/validation/forgotPassword';
 
-defineProps<{
+const props = defineProps<{
     status?: string;
 }>();
+
+const initialValues = {
+    email: '',
+};
+
+const isSubmitting = ref(false);
+
+const page = usePage<any>();
+const errors = computed<Record<string, string>>(
+    () => (page.props?.errors as Record<string, string>) ?? {},
+);
+
+const onSubmit = (event: any): void => {
+    const values = event?.values ?? event ?? {};
+
+    isSubmitting.value = true;
+
+    router.post(passwordEmail(), values, {
+        onFinish: () => {
+            isSubmitting.value = false;
+        },
+    });
+};
 </script>
 
 <template>
@@ -23,38 +43,53 @@ defineProps<{
         <Head title="Forgot password" />
 
         <div
-            v-if="status"
+            v-if="props.status"
             class="mb-4 text-center text-sm font-medium text-green-600"
         >
-            {{ status }}
+            {{ props.status }}
         </div>
 
         <div class="space-y-6">
-            <Form v-bind="email.form()" v-slot="{ errors, processing }">
+            <PvForm
+                v-slot="$form"
+                :initialValues="initialValues"
+                :resolver="forgotPasswordResolver"
+                class="space-y-6"
+                @submit="onSubmit"
+            >
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
-                    <Input
+                    <label
+                        for="email"
+                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                    >
+                        Email address
+                    </label>
+                    <InputText
                         id="email"
-                        type="email"
                         name="email"
+                        type="email"
                         autocomplete="off"
                         autofocus
                         placeholder="email@example.com"
+                        class="w-full"
                     />
-                    <InputError :message="errors.email" />
+                    <FormFieldError
+                        field="email"
+                        :form="$form"
+                        :errors="errors"
+                    />
                 </div>
 
                 <div class="my-6 flex items-center justify-start">
                     <Button
                         class="w-full"
-                        :disabled="processing"
+                        :loading="isSubmitting"
                         data-test="email-password-reset-link-button"
                     >
-                        <Spinner v-if="processing" />
                         Email password reset link
                     </Button>
                 </div>
-            </Form>
+            </PvForm>
 
             <div class="space-x-1 text-center text-sm text-muted-foreground">
                 <span>Or, return to</span>

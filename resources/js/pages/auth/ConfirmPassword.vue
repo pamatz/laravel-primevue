@@ -1,12 +1,33 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import FormFieldError from '@/components/FormFieldError.vue';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { store } from '@/routes/password/confirm';
-import { Form, Head } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import { confirmPasswordResolver } from '@/validation/confirmPassword';
+
+const initialValues = {
+    password: '',
+};
+
+const isSubmitting = ref(false);
+
+const page = usePage<any>();
+const errors = computed<Record<string, string>>(
+    () => (page.props?.errors as Record<string, string>) ?? {},
+);
+
+const onSubmit = (event: any): void => {
+    const values = event?.values ?? event ?? {};
+
+    isSubmitting.value = true;
+
+    router.post(store(), values, {
+        onFinish: () => {
+            isSubmitting.value = false;
+        },
+    });
+};
 </script>
 
 <template>
@@ -16,38 +37,50 @@ import { Form, Head } from '@inertiajs/vue3';
     >
         <Head title="Confirm password" />
 
-        <Form
-            v-bind="store.form()"
+        <PvForm
+            v-slot="$form"
+            :initialValues="initialValues"
+            :resolver="confirmPasswordResolver"
             reset-on-success
-            v-slot="{ errors, processing }"
+            class="space-y-6"
+            @submit="onSubmit"
         >
             <div class="space-y-6">
                 <div class="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
+                    <label
+                        for="password"
+                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                    >
+                        Password
+                    </label>
+                    <Password
                         id="password"
-                        type="password"
                         name="password"
-                        class="mt-1 block w-full"
-                        required
                         autocomplete="current-password"
+                        class="mt-1 block w-full"
+                        inputClass="w-full"
+                        toggleMask
+                        :feedback="false"
                         autofocus
                     />
 
-                    <InputError :message="errors.password" />
+                    <FormFieldError
+                        field="password"
+                        :form="$form"
+                        :errors="errors"
+                    />
                 </div>
 
                 <div class="flex items-center">
                     <Button
                         class="w-full"
-                        :disabled="processing"
+                        :loading="isSubmitting"
                         data-test="confirm-password-button"
                     >
-                        <Spinner v-if="processing" />
                         Confirm Password
                     </Button>
                 </div>
             </div>
-        </Form>
+        </PvForm>
     </AuthLayout>
 </template>

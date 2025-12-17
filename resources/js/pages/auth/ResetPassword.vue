@@ -1,20 +1,48 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
+import FormFieldError from '@/components/FormFieldError.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { update } from '@/routes/password';
-import { Form, Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head, router, usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import { resetPasswordResolver } from '@/validation/resetPassword';
 
 const props = defineProps<{
     token: string;
     email: string;
 }>();
 
-const inputEmail = ref(props.email);
+const initialValues = {
+    email: props.email,
+    password: '',
+    password_confirmation: '',
+};
+
+const isSubmitting = ref(false);
+
+const page = usePage<any>();
+const errors = computed<Record<string, string>>(
+    () => (page.props?.errors as Record<string, string>) ?? {},
+);
+
+const onSubmit = (event: any): void => {
+    const values = event?.values ?? event ?? {};
+
+    isSubmitting.value = true;
+
+    router.post(
+        update(),
+        {
+            ...values,
+            token: props.token,
+            email: props.email,
+        },
+        {
+            onFinish: () => {
+                isSubmitting.value = false;
+            },
+        },
+    );
+};
 </script>
 
 <template>
@@ -24,66 +52,98 @@ const inputEmail = ref(props.email);
     >
         <Head title="Reset password" />
 
-        <Form
-            v-bind="update.form()"
-            :transform="(data) => ({ ...data, token, email })"
-            :reset-on-success="['password', 'password_confirmation']"
-            v-slot="{ errors, processing }"
+        <PvForm
+            v-slot="$form"
+            :initialValues="initialValues"
+            :resolver="resetPasswordResolver"
+            class="grid gap-6"
+            @submit="onSubmit"
         >
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="email">Email</Label>
-                    <Input
+                    <label
+                        for="email"
+                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                    >
+                        Email
+                    </label>
+                    <InputText
                         id="email"
                         type="email"
                         name="email"
                         autocomplete="email"
-                        v-model="inputEmail"
+                        :value="props.email"
                         class="mt-1 block w-full"
                         readonly
                     />
-                    <InputError :message="errors.email" class="mt-2" />
+                    <FormFieldError
+                        field="email"
+                        :form="$form"
+                        :errors="errors"
+                        extraClass="mt-2"
+                    />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password">Password</Label>
-                    <Input
+                    <label
+                        for="password"
+                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                    >
+                        Password
+                    </label>
+                    <Password
                         id="password"
                         type="password"
                         name="password"
                         autocomplete="new-password"
                         class="mt-1 block w-full"
+                        inputClass="w-full"
                         autofocus
                         placeholder="Password"
+                        toggleMask
+                        :feedback="false"
                     />
-                    <InputError :message="errors.password" />
+                    <FormFieldError
+                        field="password"
+                        :form="$form"
+                        :errors="errors"
+                    />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password_confirmation">
+                    <label
+                        for="password_confirmation"
+                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                    >
                         Confirm Password
-                    </Label>
-                    <Input
+                    </label>
+                    <Password
                         id="password_confirmation"
                         type="password"
                         name="password_confirmation"
                         autocomplete="new-password"
                         class="mt-1 block w-full"
+                        inputClass="w-full"
                         placeholder="Confirm password"
+                        toggleMask
+                        :feedback="false"
                     />
-                    <InputError :message="errors.password_confirmation" />
+                    <FormFieldError
+                        field="password_confirmation"
+                        :form="$form"
+                        :errors="errors"
+                    />
                 </div>
 
                 <Button
                     type="submit"
                     class="mt-4 w-full"
-                    :disabled="processing"
+                    :loading="isSubmitting"
                     data-test="reset-password-button"
                 >
-                    <Spinner v-if="processing" />
                     Reset password
                 </Button>
             </div>
-        </Form>
+        </PvForm>
     </AuthLayout>
 </template>

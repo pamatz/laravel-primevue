@@ -7,6 +7,7 @@ import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
 import Password from 'primevue/password';
+import { Form as PvForm, FormField } from '@primevue/forms';
 import 'primeicons/primeicons.css';
 
 export function installPrimeVue(app: App): void {
@@ -21,5 +22,7 @@ export function installPrimeVue(app: App): void {
         .component('Button', Button)
         .component('InputText', InputText)
         .component('Message', Message)
-        .component('Password', Password);
+        .component('Password', Password)
+        .component('PvForm', PvForm)
+        .component('FormField', FormField);
 }
