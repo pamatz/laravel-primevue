@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import FormFieldError from '@/components/FormFieldError.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import FormFieldMessage from '@/components/FormFieldMessage.vue';
 import { update } from '@/routes/password';
-import { Head, router, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import { Form } from '@primevue/forms';
 import { resetPasswordResolver } from '@/validation/resetPassword';
 
 const props = defineProps<{
@@ -17,31 +17,17 @@ const initialValues = {
     password_confirmation: '',
 };
 
-const isSubmitting = ref(false);
+const form = useForm({
+    ...initialValues,
+    token: props.token,
+});
 
-const page = usePage<any>();
-const errors = computed<Record<string, string>>(
-    () => (page.props?.errors as Record<string, string>) ?? {},
-);
+const onFormSubmit = ({ valid }: { valid: boolean }) => {
+    if (!valid) return;
 
-const onSubmit = (event: any): void => {
-    const values = event?.values ?? event ?? {};
-
-    isSubmitting.value = true;
-
-    router.post(
-        update(),
-        {
-            ...values,
-            token: props.token,
-            email: props.email,
-        },
-        {
-            onFinish: () => {
-                isSubmitting.value = false;
-            },
-        },
-    );
+    form.submit(update(), {
+        onFinish: () => form.reset('password', 'password_confirmation'),
+    });
 };
 </script>
 
@@ -52,12 +38,12 @@ const onSubmit = (event: any): void => {
     >
         <Head title="Reset password" />
 
-        <PvForm
+        <Form
             v-slot="$form"
             :initialValues="initialValues"
             :resolver="resetPasswordResolver"
             class="grid gap-6"
-            @submit="onSubmit"
+            @submit="onFormSubmit"
         >
             <div class="grid gap-6">
                 <div class="grid gap-2">
@@ -68,19 +54,17 @@ const onSubmit = (event: any): void => {
                         Email
                     </label>
                     <InputText
+                        v-model="form.email"
                         id="email"
                         type="email"
                         name="email"
                         autocomplete="email"
-                        :value="props.email"
                         class="mt-1 block w-full"
                         readonly
                     />
-                    <FormFieldError
-                        field="email"
-                        :form="$form"
-                        :errors="errors"
-                        extraClass="mt-2"
+                    <FormFieldMessage
+                        :field="$form.email"
+                        :error="form.errors.email"
                     />
                 </div>
 
@@ -92,6 +76,7 @@ const onSubmit = (event: any): void => {
                         Password
                     </label>
                     <Password
+                        v-model="form.password"
                         id="password"
                         type="password"
                         name="password"
@@ -103,10 +88,9 @@ const onSubmit = (event: any): void => {
                         toggleMask
                         :feedback="false"
                     />
-                    <FormFieldError
-                        field="password"
-                        :form="$form"
-                        :errors="errors"
+                    <FormFieldMessage
+                        :field="$form.password"
+                        :error="form.errors.password"
                     />
                 </div>
 
@@ -118,6 +102,7 @@ const onSubmit = (event: any): void => {
                         Confirm Password
                     </label>
                     <Password
+                        v-model="form.password_confirmation"
                         id="password_confirmation"
                         type="password"
                         name="password_confirmation"
@@ -128,22 +113,22 @@ const onSubmit = (event: any): void => {
                         toggleMask
                         :feedback="false"
                     />
-                    <FormFieldError
-                        field="password_confirmation"
-                        :form="$form"
-                        :errors="errors"
+                    <FormFieldMessage
+                        :field="$form.password_confirmation"
+                        :error="form.errors.password_confirmation"
                     />
                 </div>
 
                 <Button
                     type="submit"
                     class="mt-4 w-full"
-                    :loading="isSubmitting"
+                    :loading="form.processing"
+                    :disabled="form.processing"
                     data-test="reset-password-button"
                 >
                     Reset password
                 </Button>
             </div>
-        </PvForm>
+        </Form>
     </AuthLayout>
 </template>

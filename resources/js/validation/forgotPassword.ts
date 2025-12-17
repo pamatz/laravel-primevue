@@ -1,11 +1,8 @@
-import { z } from './zod';
 import { zodResolver } from '@primevue/forms/resolvers/zod';
+import { z } from './zod';
 
-export const forgotPasswordSchema = z.object({
-    email: z
-        .string({ required_error: 'El correo electrónico es obligatorio.' })
-        .min(1, { message: 'El correo electrónico es obligatorio.' })
-        .email({ message: 'Ingresa un correo electrónico válido.' }),
+const forgotPasswordSchema = z.object({
+    email: z.string('Ingresa tu correo electrónico.').pipe(z.email()),
 });
 
 export const forgotPasswordResolver = zodResolver(forgotPasswordSchema);

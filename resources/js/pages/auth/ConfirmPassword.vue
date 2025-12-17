@@ -1,31 +1,22 @@
 <script setup lang="ts">
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import FormFieldError from '@/components/FormFieldError.vue';
-import { Head, router, usePage } from '@inertiajs/vue3';
+import FormFieldMessage from '@/components/FormFieldMessage.vue';
+import { Head, useForm } from '@inertiajs/vue3';
 import { store } from '@/routes/password/confirm';
-import { computed, ref } from 'vue';
+import { Form } from '@primevue/forms';
 import { confirmPasswordResolver } from '@/validation/confirmPassword';
 
 const initialValues = {
     password: '',
 };
 
-const isSubmitting = ref(false);
+const form = useForm({ ...initialValues });
 
-const page = usePage<any>();
-const errors = computed<Record<string, string>>(
-    () => (page.props?.errors as Record<string, string>) ?? {},
-);
+const onFormSubmit = ({ valid }: { valid: boolean }) => {
+    if (!valid) return;
 
-const onSubmit = (event: any): void => {
-    const values = event?.values ?? event ?? {};
-
-    isSubmitting.value = true;
-
-    router.post(store(), values, {
-        onFinish: () => {
-            isSubmitting.value = false;
-        },
+    form.submit(store(), {
+        onFinish: () => form.reset('password'),
     });
 };
 </script>
@@ -37,13 +28,13 @@ const onSubmit = (event: any): void => {
     >
         <Head title="Confirm password" />
 
-        <PvForm
+        <Form
             v-slot="$form"
             :initialValues="initialValues"
             :resolver="confirmPasswordResolver"
             reset-on-success
             class="space-y-6"
-            @submit="onSubmit"
+            @submit="onFormSubmit"
         >
             <div class="space-y-6">
                 <div class="grid gap-2">
@@ -54,6 +45,7 @@ const onSubmit = (event: any): void => {
                         Password
                     </label>
                     <Password
+                        v-model="form.password"
                         id="password"
                         name="password"
                         autocomplete="current-password"
@@ -64,23 +56,23 @@ const onSubmit = (event: any): void => {
                         autofocus
                     />
 
-                    <FormFieldError
-                        field="password"
-                        :form="$form"
-                        :errors="errors"
+                    <FormFieldMessage
+                        :field="$form.password"
+                        :error="form.errors.password"
                     />
                 </div>
 
                 <div class="flex items-center">
                     <Button
                         class="w-full"
-                        :loading="isSubmitting"
+                        :loading="form.processing"
+                        :disabled="form.processing"
                         data-test="confirm-password-button"
                     >
                         Confirm Password
                     </Button>
                 </div>
             </div>
-        </PvForm>
+        </Form>
     </AuthLayout>
 </template>

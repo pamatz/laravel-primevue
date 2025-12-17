@@ -1,12 +1,4 @@
 <script setup lang="ts">
-import FormFieldError from '@/components/FormFieldError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-    InputOTP,
-    InputOTPGroup,
-    InputOTPSlot,
-} from '@/components/ui/input-otp';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { store } from '@/routes/two-factor/login';
 import { Form, Head } from '@inertiajs/vue3';
@@ -68,27 +60,26 @@ const code = ref<string>('');
                         class="flex flex-col items-center justify-center space-y-3 text-center"
                     >
                         <div class="flex w-full items-center justify-center">
-                            <InputOTP
+                            <InputText
                                 id="otp"
                                 v-model="code"
-                                :maxlength="6"
+                                maxlength="6"
                                 :disabled="processing"
                                 autofocus
-                            >
-                                <InputOTPGroup>
-                                    <InputOTPSlot
-                                        v-for="index in 6"
-                                        :key="index"
-                                        :index="index - 1"
-                                    />
-                                </InputOTPGroup>
-                            </InputOTP>
+                                inputmode="numeric"
+                                class="w-full max-w-xs text-center tracking-[0.5em]"
+                            />
                         </div>
-                        <FormFieldError field="code" :errors="errors" />
+                        <p
+                            v-if="errors.code"
+                            class="text-sm text-red-600 dark:text-red-400"
+                        >
+                            {{ errors.code }}
+                        </p>
                     </div>
-                    <Button type="submit" class="w-full" :disabled="processing"
-                        >Continue</Button
-                    >
+                    <Button type="submit" class="w-full" :disabled="processing">
+                        Continue
+                    </Button>
                     <div class="text-center text-sm text-muted-foreground">
                         <span>or you can </span>
                         <button
@@ -109,17 +100,24 @@ const code = ref<string>('');
                     reset-on-error
                     #default="{ errors, processing, clearErrors }"
                 >
-                    <Input
+                    <InputText
+                        id="recovery_code"
                         name="recovery_code"
                         type="text"
                         placeholder="Enter recovery code"
                         :autofocus="showRecoveryInput"
                         required
+                        class="w-full max-w-xs"
                     />
-                    <FormFieldError field="recovery_code" :errors="errors" />
-                    <Button type="submit" class="w-full" :disabled="processing"
-                        >Continue</Button
+                    <p
+                        v-if="errors.recovery_code"
+                        class="text-sm text-red-600 dark:text-red-400"
                     >
+                        {{ errors.recovery_code }}
+                    </p>
+                    <Button type="submit" class="w-full" :disabled="processing">
+                        Continue
+                    </Button>
 
                     <div class="text-center text-sm text-muted-foreground">
                         <span>or you can </span>

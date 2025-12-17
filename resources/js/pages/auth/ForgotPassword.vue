@@ -1,11 +1,11 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+import FormFieldMessage from '@/components/FormFieldMessage.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import FormFieldError from '@/components/FormFieldError.vue';
-import { Head, router, usePage } from '@inertiajs/vue3';
 import { login } from '@/routes';
 import { email as passwordEmail } from '@/routes/password';
-import { computed, ref } from 'vue';
 import { forgotPasswordResolver } from '@/validation/forgotPassword';
+import { Head, useForm } from '@inertiajs/vue3';
+import { Form } from '@primevue/forms';
 
 const props = defineProps<{
     status?: string;
@@ -15,85 +15,81 @@ const initialValues = {
     email: '',
 };
 
-const isSubmitting = ref(false);
+const form = useForm({ ...initialValues });
 
-const page = usePage<any>();
-const errors = computed<Record<string, string>>(
-    () => (page.props?.errors as Record<string, string>) ?? {},
-);
+const onFormSubmit = ({ valid }: { valid: boolean }) => {
+    if (!valid) return;
 
-const onSubmit = (event: any): void => {
-    const values = event?.values ?? event ?? {};
-
-    isSubmitting.value = true;
-
-    router.post(passwordEmail(), values, {
-        onFinish: () => {
-            isSubmitting.value = false;
-        },
+    form.submit(passwordEmail(), {
+        onFinish: () => form.reset('email'),
     });
 };
 </script>
 
 <template>
     <AuthLayout
-        title="Forgot password"
         description="Enter your email to receive a password reset link"
+        title="Forgot password"
     >
         <Head title="Forgot password" />
 
-        <div
-            v-if="props.status"
-            class="mb-4 text-center text-sm font-medium text-green-600"
-        >
-            {{ props.status }}
+        <div v-if="props.status" class="mb-4">
+            <Message :life="5000" class="w-full" severity="success">
+                {{ props.status }}
+            </Message>
         </div>
 
         <div class="space-y-6">
-            <PvForm
+            <Form
                 v-slot="$form"
                 :initialValues="initialValues"
                 :resolver="forgotPasswordResolver"
                 class="space-y-6"
-                @submit="onSubmit"
+                @submit="onFormSubmit"
             >
-                <div class="grid gap-2">
+                <div class="flex flex-col gap-2">
                     <label
-                        for="email"
                         class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                        for="email"
                     >
-                        Email address
+                        Correo electrónico
                     </label>
                     <InputText
                         id="email"
+                        v-model="form.email"
+                        autocomplete="email"
+                        autofocus
+                        class="w-full"
                         name="email"
                         type="email"
-                        autocomplete="off"
-                        autofocus
-                        placeholder="email@example.com"
-                        class="w-full"
                     />
-                    <FormFieldError
-                        field="email"
-                        :form="$form"
-                        :errors="errors"
+                    <FormFieldMessage
+                        :error="form.errors.email"
+                        :field="$form.email"
                     />
                 </div>
 
                 <div class="my-6 flex items-center justify-start">
                     <Button
+                        :disabled="form.processing"
+                        :loading="form.processing"
                         class="w-full"
-                        :loading="isSubmitting"
                         data-test="email-password-reset-link-button"
+                        type="submit"
                     >
                         Email password reset link
                     </Button>
                 </div>
-            </PvForm>
+            </Form>
 
-            <div class="space-x-1 text-center text-sm text-muted-foreground">
+            <div class="text-muted-foreground space-x-1 text-center text-sm">
                 <span>Or, return to</span>
-                <TextLink :href="login()">log in</TextLink>
+                <Button
+                    :href="login().url"
+                    as="a"
+                    label="log in"
+                    variant="link"
+                ></Button>
             </div>
         </div>
     </AuthLayout>

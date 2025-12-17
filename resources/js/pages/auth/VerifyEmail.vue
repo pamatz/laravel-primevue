@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import TextLink from '@/components/TextLink.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps<{
@@ -48,13 +47,12 @@ const onResend = (): void => {
                 Resend verification email
             </Button>
 
-            <TextLink
+            <Link
                 :href="logout()"
-                as="button"
-                class="mx-auto block text-sm"
+                class="mx-auto block text-sm text-primary-600 hover:underline dark:text-primary-400"
             >
                 Log out
-            </TextLink>
+            </Link>
         </div>
     </AuthLayout>
 </template>

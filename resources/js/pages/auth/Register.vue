@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import TextLink from '@/components/TextLink.vue';
-import FormFieldError from '@/components/FormFieldError.vue';
+import FormFieldMessage from '@/components/FormFieldMessage.vue';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import { Head, router, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Form } from '@primevue/forms';
 import { registerResolver } from '@/validation/register';
 
 const initialValues = {
@@ -15,22 +14,13 @@ const initialValues = {
     password_confirmation: '',
 };
 
-const isSubmitting = ref(false);
+const form = useForm({ ...initialValues });
 
-const page = usePage<any>();
-const errors = computed<Record<string, string>>(
-    () => (page.props?.errors as Record<string, string>) ?? {},
-);
+const onFormSubmit = ({ valid }: { valid: boolean }) => {
+    if (!valid) return;
 
-const onSubmit = (event: any): void => {
-    const values = event?.values ?? event ?? {};
-
-    isSubmitting.value = true;
-
-    router.post(store(), values, {
-        onFinish: () => {
-            isSubmitting.value = false;
-        },
+    form.submit(store(), {
+        onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
 </script>
@@ -42,12 +32,12 @@ const onSubmit = (event: any): void => {
     >
         <Head title="Register" />
 
-        <PvForm
+        <Form
             v-slot="$form"
             :initialValues="initialValues"
             :resolver="registerResolver"
             class="flex flex-col gap-6"
-            @submit="onSubmit"
+            @submit="onFormSubmit"
         >
             <div class="grid gap-6">
                 <div class="grid gap-2">
@@ -58,6 +48,7 @@ const onSubmit = (event: any): void => {
                         Name
                     </label>
                     <InputText
+                        v-model="form.name"
                         id="name"
                         type="text"
                         required
@@ -68,10 +59,9 @@ const onSubmit = (event: any): void => {
                         placeholder="Full name"
                         class="w-full"
                     />
-                    <FormFieldError
-                        field="name"
-                        :form="$form"
-                        :errors="errors"
+                    <FormFieldMessage
+                        :field="$form.name"
+                        :error="form.errors.name"
                     />
                 </div>
 
@@ -83,6 +73,7 @@ const onSubmit = (event: any): void => {
                         Email address
                     </label>
                     <InputText
+                        v-model="form.email"
                         id="email"
                         type="email"
                         required
@@ -92,10 +83,9 @@ const onSubmit = (event: any): void => {
                         placeholder="email@example.com"
                         class="w-full"
                     />
-                    <FormFieldError
-                        field="email"
-                        :form="$form"
-                        :errors="errors"
+                    <FormFieldMessage
+                        :field="$form.email"
+                        :error="form.errors.email"
                     />
                 </div>
 
@@ -107,6 +97,7 @@ const onSubmit = (event: any): void => {
                         Password
                     </label>
                     <Password
+                        v-model="form.password"
                         id="password"
                         type="password"
                         required
@@ -119,10 +110,9 @@ const onSubmit = (event: any): void => {
                         toggleMask
                         :feedback="false"
                     />
-                    <FormFieldError
-                        field="password"
-                        :form="$form"
-                        :errors="errors"
+                    <FormFieldMessage
+                        :field="$form.password"
+                        :error="form.errors.password"
                     />
                 </div>
 
@@ -134,6 +124,7 @@ const onSubmit = (event: any): void => {
                         Confirm password
                     </label>
                     <Password
+                        v-model="form.password_confirmation"
                         id="password_confirmation"
                         type="password"
                         required
@@ -146,10 +137,9 @@ const onSubmit = (event: any): void => {
                         toggleMask
                         :feedback="false"
                     />
-                    <FormFieldError
-                        field="password_confirmation"
-                        :form="$form"
-                        :errors="errors"
+                    <FormFieldMessage
+                        :field="$form.password_confirmation"
+                        :error="form.errors.password_confirmation"
                     />
                 </div>
 
@@ -157,7 +147,8 @@ const onSubmit = (event: any): void => {
                     type="submit"
                     class="mt-2 w-full"
                     tabindex="5"
-                    :loading="isSubmitting"
+                    :loading="form.processing"
+                    :disabled="form.processing"
                     data-test="register-user-button"
                 >
                     Create account
@@ -166,13 +157,14 @@ const onSubmit = (event: any): void => {
 
             <div class="text-center text-sm text-muted-foreground">
                 Already have an account?
-                <TextLink
+                <Link
                     :href="login()"
                     class="underline underline-offset-4"
                     :tabindex="6"
-                    >Log in</TextLink
                 >
+                    Log in
+                </Link>
             </div>
-        </PvForm>
+        </Form>
     </AuthBase>
 </template>

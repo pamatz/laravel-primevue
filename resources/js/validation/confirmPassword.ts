@@ -1,10 +1,10 @@
 import { z } from './zod';
 import { zodResolver } from '@primevue/forms/resolvers/zod';
 
-export const confirmPasswordSchema = z.object({
+const confirmPasswordSchema = z.object({
     password: z
-        .string({ required_error: 'La contraseña es obligatoria.' })
-        .min(1, { message: 'La contraseña es obligatoria.' }),
+        .string({ required_error: 'Ingresa tu contraseña.' })
+        .min(1, 'Ingresa tu contraseña.'),
 });
 
 export const confirmPasswordResolver = zodResolver(confirmPasswordSchema);

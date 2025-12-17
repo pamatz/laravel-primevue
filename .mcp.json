@@ -2,18 +2,20 @@
     "mcpServers": {
         "laravel-boost": {
             "command": "php",
-            "args": [
-                "artisan",
-                "boost:mcp"
-            ]
+            "args": ["artisan", "boost:mcp"]
         },
         "herd": {
             "command": "php",
-            "args": [
-                "C:/Users/rdpam/.config/herd/bin/herd-mcp.phar"
-            ],
+            "args": ["C:/Users/rdpam/.config/herd/bin/herd-mcp.phar"],
             "env": {
                 "SITE_PATH": "D:\\sites\\laravel-primevue"
+            }
+        },
+        "inertia-js": {
+            "command": "npx",
+            "args": ["https://inertiajs.com/docs/mcp", "--transport", "http"],
+            "env": {
+                "SITE_PATH": ""
             }
         }
     }
