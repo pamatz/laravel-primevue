@@ -4,13 +4,14 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<\\Database\\Factories\\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
@@ -22,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
     ];
 
     /**
@@ -48,5 +50,75 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Rol asignado al usuario.
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Indica si el usuario es superadministrador.
+     */
+    public function isSuperAdmin(): bool
+    {
+        $role = $this->role;
+
+        return $role?->is_superadmin === true;
+    }
+
+    /**
+     * Verifica si el usuario tiene un permiso específico.
+     */
+    public function hasPermission(string $key): bool
+    {
+        if (! $this->exists) {
+            return false;
+        }
+
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        $role = $this->role;
+
+        if (! $role) {
+            return false;
+        }
+
+        return $role->permissions()
+            ->where('key', $key)
+            ->exists();
+    }
+
+    /**
+     * Verifica si el usuario tiene al menos uno de los permisos dados.
+     *
+     * @param  list<string>  $keys
+     */
+    public function hasAnyPermission(array $keys): bool
+    {
+        if (! $this->exists) {
+            return false;
+        }
+
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        $role = $this->role;
+
+        if (! $role || $keys === []) {
+            return false;
+        }
+
+        $keys = array_values(array_unique($keys));
+
+        return $role->permissions()
+            ->whereIn('key', $keys)
+            ->exists();
     }
 }

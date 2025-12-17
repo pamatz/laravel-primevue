@@ -38,14 +38,42 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        $user = $request->user();
+
+        $navigation = collect(config('navigation'))
+            ->map(function (array $section) use ($user): array {
+                $items = collect($section['items'] ?? [])
+                    ->filter(function (array $item) use ($user): bool {
+                        $permission = $item['permission'] ?? null;
+
+                        if ($permission === null) {
+                            // Ítems sin permiso explícito solo se muestran a usuarios autenticados.
+                            return $user !== null;
+                        }
+
+                        return $user?->hasPermission($permission) ?? false;
+                    })
+                    ->values()
+                    ->all();
+
+                return [
+                    'label' => $section['label'],
+                    'items' => $items,
+                ];
+            })
+            ->filter(fn (array $section): bool => count($section['items']) > 0)
+            ->values()
+            ->all();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'false',
+            'navigation' => $navigation,
         ];
     }
 }

@@ -20,6 +20,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const page = usePage<AppPageProps>();
 
+const navigation = computed(() => page.props.navigation ?? []);
+
 const sidebarOpen = ref(page.props.sidebarOpen);
 const isDesktop = ref(false);
 
@@ -145,55 +147,25 @@ const toggleUserMenu = (event: MouseEvent): void => {
             </div>
 
             <nav class="mt-4 space-y-4 px-2 text-sm font-medium">
-                <div>
+                <div v-for="section in navigation" :key="section.label">
                     <p
                         class="mb-2 px-3 text-[11px] font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400"
                     >
-                        General
+                        {{ section.label }}
                     </p>
                     <Link
+                        v-for="item in section.items"
+                        :key="item.href"
+                        :href="item.href"
                         :class="[
                             'flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800',
-                            isActive('/dashboard')
+                            isActive(item.href)
                                 ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50'
                                 : 'text-neutral-700 dark:text-neutral-200',
                         ]"
-                        href="/dashboard"
                     >
-                        <i class="pi pi-chart-bar text-base"></i>
-                        <span>Panel principal</span>
-                    </Link>
-                </div>
-
-                <div>
-                    <p
-                        class="mb-2 px-3 text-[11px] font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400"
-                    >
-                        Configuración
-                    </p>
-                    <Link
-                        :class="[
-                            'flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800',
-                            isActive('/settings/profile')
-                                ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50'
-                                : 'text-neutral-700 dark:text-neutral-200',
-                        ]"
-                        href="/settings/profile"
-                    >
-                        <i class="pi pi-user text-base"></i>
-                        <span>Perfil</span>
-                    </Link>
-                    <Link
-                        :class="[
-                            'flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800',
-                            isActive('/settings/appearance')
-                                ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50'
-                                : 'text-neutral-700 dark:text-neutral-200',
-                        ]"
-                        href="/settings/appearance"
-                    >
-                        <i class="pi pi-palette text-base"></i>
-                        <span>Apariencia</span>
+                        <i class="text-base" :class="item.icon"></i>
+                        <span>{{ item.label }}</span>
                     </Link>
                 </div>
             </nav>
@@ -219,69 +191,28 @@ const toggleUserMenu = (event: MouseEvent): void => {
             </div>
 
             <nav class="mt-4 flex-1 space-y-4 px-2 text-xs font-medium">
-                <div>
+                <div v-for="section in navigation" :key="section.label">
                     <p
                         v-if="sidebarOpen"
                         class="mb-2 px-3 text-[11px] font-semibold tracking-wide text-primary-100/80 uppercase"
                     >
-                        General
+                        {{ section.label }}
                     </p>
                     <Link
+                        v-for="item in section.items"
+                        :key="item.href"
+                        :href="item.href"
+                        :title="item.label"
                         :class="[
                             'flex items-center rounded-lg px-3 py-2 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none',
-                            sidebarOpen
-                                ? 'justify-start gap-3'
-                                : 'justify-center',
-                            isActive('/dashboard')
+                            sidebarOpen ? 'justify-start gap-3' : 'justify-center',
+                            isActive(item.href)
                                 ? 'bg-white/10 text-white'
                                 : 'text-primary-50/80',
                         ]"
-                        href="/dashboard"
-                        title="Panel principal"
                     >
-                        <i class="pi pi-chart-bar text-base"></i>
-                        <span v-if="sidebarOpen">Panel principal</span>
-                    </Link>
-                </div>
-
-                <div>
-                    <p
-                        v-if="sidebarOpen"
-                        class="mb-2 px-3 text-[11px] font-semibold tracking-wide text-primary-100/80 uppercase"
-                    >
-                        Configuración
-                    </p>
-                    <Link
-                        :class="[
-                            'flex items-center rounded-lg px-3 py-2 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none',
-                            sidebarOpen
-                                ? 'justify-start gap-3'
-                                : 'justify-center',
-                            isActive('/settings/profile')
-                                ? 'bg-white/10 text-white'
-                                : 'text-primary-50/80',
-                        ]"
-                        href="/settings/profile"
-                        title="Perfil"
-                    >
-                        <i class="pi pi-user text-base"></i>
-                        <span v-if="sidebarOpen">Perfil</span>
-                    </Link>
-                    <Link
-                        :class="[
-                            'flex items-center rounded-lg px-3 py-2 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none',
-                            sidebarOpen
-                                ? 'justify-start gap-3'
-                                : 'justify-center',
-                            isActive('/settings/appearance')
-                                ? 'bg-white/10 text-white'
-                                : 'text-primary-50/80',
-                        ]"
-                        href="/settings/appearance"
-                        title="Apariencia"
-                    >
-                        <i class="pi pi-palette text-base"></i>
-                        <span v-if="sidebarOpen">Apariencia</span>
+                        <i class="text-base" :class="item.icon"></i>
+                        <span v-if="sidebarOpen">{{ item.label }}</span>
                     </Link>
                 </div>
             </nav>

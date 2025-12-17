@@ -17,6 +17,17 @@ export interface NavItem {
     isActive?: boolean;
 }
 
+export interface SidebarItem {
+    label: string;
+    href: NonNullable<InertiaLinkProps['href']>;
+    icon?: string;
+}
+
+export interface SidebarSection {
+    label: string;
+    items: SidebarItem[];
+}
+
 export type AppPageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
@@ -24,6 +35,7 @@ export type AppPageProps<
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    navigation: SidebarSection[];
 };
 
 export interface User {
