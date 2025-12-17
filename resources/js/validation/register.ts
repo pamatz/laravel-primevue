@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from './zod';
 import { zodResolver } from '@primevue/forms/resolvers/zod';
 
 export const registerSchema = z
