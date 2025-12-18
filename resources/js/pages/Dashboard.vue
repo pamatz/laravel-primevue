@@ -1,7 +1,8 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head } from '@inertiajs/vue3';
 import type { BreadcrumbItemType } from '@/types';
+import { Head } from '@inertiajs/vue3';
+import { Button, Card } from 'primevue';
 
 const breadcrumbs: BreadcrumbItemType[] = [
     {
@@ -12,7 +13,7 @@ const breadcrumbs: BreadcrumbItemType[] = [
 </script>
 
 <template>
-    <AppLayout title="Dashboard" :breadcrumbs="breadcrumbs">
+    <AppLayout :breadcrumbs="breadcrumbs" title="Dashboard">
         <Head title="Dashboard" />
 
         <section class="space-y-6">
@@ -20,11 +21,15 @@ const breadcrumbs: BreadcrumbItemType[] = [
                 <Card>
                     <template #title>Resumen de ventas</template>
                     <template #content>
-                        <p class="text-sm text-neutral-600 dark:text-neutral-300">
+                        <p
+                            class="text-sm text-neutral-600 dark:text-neutral-300"
+                        >
                             Total de ventas del mes actual.
                         </p>
                         <p class="mt-3 text-3xl font-semibold">$24,500</p>
-                        <p class="mt-1 text-xs text-emerald-600 dark:text-emerald-400">
+                        <p
+                            class="mt-1 text-xs text-emerald-600 dark:text-emerald-400"
+                        >
                             +12% respecto al mes anterior
                         </p>
                     </template>
@@ -33,11 +38,15 @@ const breadcrumbs: BreadcrumbItemType[] = [
                 <Card>
                     <template #title>Nuevos clientes</template>
                     <template #content>
-                        <p class="text-sm text-neutral-600 dark:text-neutral-300">
+                        <p
+                            class="text-sm text-neutral-600 dark:text-neutral-300"
+                        >
                             Clientes que se registraron esta semana.
                         </p>
                         <p class="mt-3 text-3xl font-semibold">128</p>
-                        <p class="mt-1 text-xs text-emerald-600 dark:text-emerald-400">
+                        <p
+                            class="mt-1 text-xs text-emerald-600 dark:text-emerald-400"
+                        >
                             +8 desde ayer
                         </p>
                     </template>
@@ -46,11 +55,15 @@ const breadcrumbs: BreadcrumbItemType[] = [
                 <Card>
                     <template #title>Tickets abiertos</template>
                     <template #content>
-                        <p class="text-sm text-neutral-600 dark:text-neutral-300">
+                        <p
+                            class="text-sm text-neutral-600 dark:text-neutral-300"
+                        >
                             Soportes pendientes de resolución.
                         </p>
                         <p class="mt-3 text-3xl font-semibold">32</p>
-                        <p class="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                        <p
+                            class="mt-1 text-xs text-amber-600 dark:text-amber-400"
+                        >
                             5 con prioridad alta
                         </p>
                     </template>
@@ -65,7 +78,9 @@ const breadcrumbs: BreadcrumbItemType[] = [
                             <li class="flex items-start justify-between gap-3">
                                 <div>
                                     <p class="font-medium">Pago recibido</p>
-                                    <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                                    <p
+                                        class="text-xs text-neutral-500 dark:text-neutral-400"
+                                    >
                                         Factura #INV-2025-001 de Juan Pérez
                                     </p>
                                 </div>
@@ -77,8 +92,12 @@ const breadcrumbs: BreadcrumbItemType[] = [
                             </li>
                             <li class="flex items-start justify-between gap-3">
                                 <div>
-                                    <p class="font-medium">Nuevo usuario registrado</p>
-                                    <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                                    <p class="font-medium">
+                                        Nuevo usuario registrado
+                                    </p>
+                                    <p
+                                        class="text-xs text-neutral-500 dark:text-neutral-400"
+                                    >
                                         ana.garcia@example.com
                                     </p>
                                 </div>
@@ -90,9 +109,14 @@ const breadcrumbs: BreadcrumbItemType[] = [
                             </li>
                             <li class="flex items-start justify-between gap-3">
                                 <div>
-                                    <p class="font-medium">Ticket actualizado</p>
-                                    <p class="text-xs text-neutral-500 dark:text-neutral-400">
-                                        Soporte para acceso al portal de proveedores
+                                    <p class="font-medium">
+                                        Ticket actualizado
+                                    </p>
+                                    <p
+                                        class="text-xs text-neutral-500 dark:text-neutral-400"
+                                    >
+                                        Soporte para acceso al portal de
+                                        proveedores
                                     </p>
                                 </div>
                                 <span
@@ -110,22 +134,22 @@ const breadcrumbs: BreadcrumbItemType[] = [
                     <template #content>
                         <div class="flex flex-col gap-2">
                             <Button
-                                label="Crear reporte"
+                                class="w-full justify-start"
                                 icon="pi pi-chart-line"
-                                class="w-full justify-start"
+                                label="Crear reporte"
                             />
                             <Button
-                                label="Agregar usuario"
+                                class="w-full justify-start"
                                 icon="pi pi-user-plus"
-                                class="w-full justify-start"
+                                label="Agregar usuario"
                                 severity="secondary"
                             />
                             <Button
-                                label="Ver tickets"
-                                icon="pi pi-inbox"
                                 class="w-full justify-start"
-                                severity="secondary"
+                                icon="pi pi-inbox"
+                                label="Ver tickets"
                                 outlined
+                                severity="secondary"
                             />
                         </div>
                     </template>

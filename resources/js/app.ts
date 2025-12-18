@@ -33,7 +33,7 @@ createInertiaApp({
                 },
             },
         });
-        updateColors('primary','sky');
+        updateColors('primary', 'rose');
         app.mount(el);
     },
 });

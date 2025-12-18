@@ -1,6 +1,7 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
+import { Button } from 'primevue';
 import { computed, ref } from 'vue';
 
 interface Role {
@@ -106,7 +107,7 @@ const breadcrumbItems = computed(() => [
 </script>
 
 <template>
-    <AppLayout title="Usuarios" :breadcrumbs="breadcrumbItems">
+    <AppLayout :breadcrumbs="breadcrumbItems" title="Usuarios">
         <Head title="Usuarios" />
 
         <section class="space-y-6">
@@ -118,16 +119,23 @@ const breadcrumbItems = computed(() => [
                     </p>
                 </div>
 
-                <Button icon="pi pi-plus" label="Nuevo usuario" size="small" @click="openCreate" />
+                <Button
+                    icon="pi pi-plus"
+                    label="Nuevo usuario"
+                    size="small"
+                    @click="openCreate"
+                />
             </div>
 
-            <div class="card overflow-hidden rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+            <div
+                class="card overflow-hidden rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
+            >
                 <DataTable
-                    :value="props.users.data"
-                    dataKey="id"
                     :rows="15"
-                    responsiveLayout="stack"
+                    :value="props.users.data"
                     class="text-sm"
+                    dataKey="id"
+                    responsiveLayout="stack"
                 >
                     <Column field="name" header="Nombre" sortable />
                     <Column field="email" header="Correo" />
@@ -142,17 +150,17 @@ const breadcrumbItems = computed(() => [
                                 <Button
                                     icon="pi pi-pencil"
                                     rounded
+                                    severity="secondary"
                                     text
                                     type="button"
-                                    severity="secondary"
                                     @click="openEdit(data)"
                                 />
                                 <Button
                                     icon="pi pi-trash"
                                     rounded
+                                    severity="danger"
                                     text
                                     type="button"
-                                    severity="danger"
                                     @click="remove(data)"
                                 />
                             </div>
@@ -164,9 +172,9 @@ const breadcrumbItems = computed(() => [
 
         <Dialog
             v-model:visible="dialogVisible"
+            :header="isEditing ? 'Editar usuario' : 'Nuevo usuario'"
             :modal="true"
             :style="{ width: '32rem' }"
-            :header="isEditing ? 'Editar usuario' : 'Nuevo usuario'"
         >
             <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
                 <div class="flex flex-col gap-2">
@@ -174,8 +182,8 @@ const breadcrumbItems = computed(() => [
                     <InputText
                         id="name"
                         v-model="form.name"
-                        class="w-full"
                         autocomplete="off"
+                        class="w-full"
                     />
                     <small v-if="form.errors.name" class="text-xs text-red-500">
                         {{ form.errors.name }}
@@ -183,15 +191,20 @@ const breadcrumbItems = computed(() => [
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-medium" for="email">Correo</label>
+                    <label class="text-sm font-medium" for="email"
+                        >Correo</label
+                    >
                     <InputText
                         id="email"
                         v-model="form.email"
-                        type="email"
-                        class="w-full"
                         autocomplete="off"
+                        class="w-full"
+                        type="email"
                     />
-                    <small v-if="form.errors.email" class="text-xs text-red-500">
+                    <small
+                        v-if="form.errors.email"
+                        class="text-xs text-red-500"
+                    >
                         {{ form.errors.email }}
                     </small>
                 </div>
@@ -199,19 +212,25 @@ const breadcrumbItems = computed(() => [
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-medium" for="password">
                         Contraseña
-                        <span v-if="isEditing" class="text-xs text-neutral-500 dark:text-neutral-400">
+                        <span
+                            v-if="isEditing"
+                            class="text-xs text-neutral-500 dark:text-neutral-400"
+                        >
                             (déjalo vacío para no cambiarla)
                         </span>
                     </label>
                     <Password
                         id="password"
                         v-model="form.password"
+                        :feedback="false"
                         class="w-full"
                         inputClass="w-full"
                         toggleMask
-                        :feedback="false"
                     />
-                    <small v-if="form.errors.password" class="text-xs text-red-500">
+                    <small
+                        v-if="form.errors.password"
+                        class="text-xs text-red-500"
+                    >
                         {{ form.errors.password }}
                     </small>
                 </div>
@@ -222,29 +241,32 @@ const breadcrumbItems = computed(() => [
                         id="role_id"
                         v-model="form.role_id"
                         :options="props.roles"
+                        :showClear="true"
+                        class="w-full"
                         optionLabel="name"
                         optionValue="id"
-                        class="w-full"
                         placeholder="Selecciona un rol"
-                        :showClear="true"
                     />
-                    <small v-if="form.errors.role_id" class="text-xs text-red-500">
+                    <small
+                        v-if="form.errors.role_id"
+                        class="text-xs text-red-500"
+                    >
                         {{ form.errors.role_id }}
                     </small>
                 </div>
 
                 <div class="mt-4 flex justify-end gap-2">
                     <Button
-                        type="button"
                         label="Cancelar"
                         severity="secondary"
                         text
+                        type="button"
                         @click="closeDialog"
                     />
                     <Button
-                        type="submit"
                         :label="isEditing ? 'Guardar cambios' : 'Crear usuario'"
                         :loading="form.processing"
+                        type="submit"
                     />
                 </div>
             </form>

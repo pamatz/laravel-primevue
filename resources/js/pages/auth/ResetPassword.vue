@@ -1,10 +1,11 @@
-<script setup lang="ts">
-import AuthLayout from '@/layouts/AuthLayout.vue';
+<script lang="ts" setup>
 import FormFieldMessage from '@/components/FormFieldMessage.vue';
+import AuthLayout from '@/layouts/AuthLayout.vue';
 import { update } from '@/routes/password';
+import { resetPasswordResolver } from '@/validation/resetPassword';
 import { Head, useForm } from '@inertiajs/vue3';
 import { Form } from '@primevue/forms';
-import { resetPasswordResolver } from '@/validation/resetPassword';
+import { Button, InputText, Password } from 'primevue';
 
 const props = defineProps<{
     token: string;
@@ -33,8 +34,8 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
 
 <template>
     <AuthLayout
-        title="Reset password"
         description="Please enter your new password below"
+        title="Reset password"
     >
         <Head title="Reset password" />
 
@@ -48,83 +49,83 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
             <div class="grid gap-6">
                 <div class="grid gap-2">
                     <label
-                        for="email"
                         class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                        for="email"
                     >
                         Email
                     </label>
                     <InputText
-                        v-model="form.email"
                         id="email"
-                        type="email"
-                        name="email"
+                        v-model="form.email"
                         autocomplete="email"
                         class="mt-1 block w-full"
+                        name="email"
                         readonly
+                        type="email"
                     />
                     <FormFieldMessage
-                        :field="$form.email"
                         :error="form.errors.email"
+                        :field="$form.email"
                     />
                 </div>
 
                 <div class="grid gap-2">
                     <label
-                        for="password"
                         class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                        for="password"
                     >
                         Password
                     </label>
                     <Password
-                        v-model="form.password"
                         id="password"
-                        type="password"
-                        name="password"
+                        v-model="form.password"
+                        :feedback="false"
                         autocomplete="new-password"
+                        autofocus
                         class="mt-1 block w-full"
                         inputClass="w-full"
-                        autofocus
+                        name="password"
                         placeholder="Password"
                         toggleMask
-                        :feedback="false"
+                        type="password"
                     />
                     <FormFieldMessage
-                        :field="$form.password"
                         :error="form.errors.password"
+                        :field="$form.password"
                     />
                 </div>
 
                 <div class="grid gap-2">
                     <label
-                        for="password_confirmation"
                         class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
+                        for="password_confirmation"
                     >
                         Confirm Password
                     </label>
                     <Password
-                        v-model="form.password_confirmation"
                         id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
+                        v-model="form.password_confirmation"
+                        :feedback="false"
                         autocomplete="new-password"
                         class="mt-1 block w-full"
                         inputClass="w-full"
+                        name="password_confirmation"
                         placeholder="Confirm password"
                         toggleMask
-                        :feedback="false"
+                        type="password"
                     />
                     <FormFieldMessage
-                        :field="$form.password_confirmation"
                         :error="form.errors.password_confirmation"
+                        :field="$form.password_confirmation"
                     />
                 </div>
 
                 <Button
-                    type="submit"
-                    class="mt-4 w-full"
-                    :loading="form.processing"
                     :disabled="form.processing"
+                    :loading="form.processing"
+                    class="mt-4 w-full"
                     data-test="reset-password-button"
+                    type="submit"
                 >
                     Reset password
                 </Button>

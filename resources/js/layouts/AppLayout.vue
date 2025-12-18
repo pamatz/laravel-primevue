@@ -2,9 +2,7 @@
 import { logout } from '@/routes';
 import type { AppPageProps, BreadcrumbItemType } from '@/types';
 import { Link, router, usePage } from '@inertiajs/vue3';
-import Avatar from 'primevue/avatar';
-import Drawer from 'primevue/drawer';
-import Menu from 'primevue/menu';
+import { Avatar, Button, Drawer, Menu } from 'primevue';
 import type { MenuItem } from 'primevue/menuitem';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
@@ -155,15 +153,15 @@ const toggleUserMenu = (event: MouseEvent): void => {
                     <Link
                         v-for="item in section.items"
                         :key="item.href"
-                        :href="item.href"
                         :class="[
                             'flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800',
                             isActive(item.href)
                                 ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50'
                                 : 'text-neutral-700 dark:text-neutral-200',
                         ]"
+                        :href="item.href"
                     >
-                        <i class="text-base" :class="item.icon"></i>
+                        <i :class="item.icon" class="text-base"></i>
                         <span>{{ item.label }}</span>
                     </Link>
                 </div>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import FormFieldMessage from '@/components/FormFieldMessage.vue';
 import { store } from '@/routes/login';
+import { request } from '@/routes/password';
 import { loginResolver } from '@/validation/login';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { Form } from '@primevue/forms';
@@ -20,7 +21,7 @@ const initialValues = {
 
 const form = useForm({ ...initialValues });
 
-const onFormSubmit = ({ valid }) => {
+const onFormSubmit = ({ valid }: any) => {
     if (valid) {
         form.submit(store(), {
             onFinish: () => form.reset('password'),
@@ -72,134 +73,134 @@ const onFormSubmit = ({ valid }) => {
             <div class="flex flex-col items-center gap-4">
                 <div class="flex items-center gap-4">
                     <svg
-                        width="180"
                         height="150"
                         viewBox="20 30 160 120"
+                        width="180"
                         xmlns="http://www.w3.org/2000/svg"
                     >
                         <rect
-                            x="20"
-                            y="30"
-                            width="90"
+                            class="fill-primary-500"
                             height="120"
                             rx="10"
                             ry="10"
-                            class="fill-primary-500"
+                            width="90"
+                            x="20"
+                            y="30"
                         />
                         <rect
-                            x="120"
-                            y="70"
-                            width="60"
+                            class="fill-primary-900"
                             height="80"
                             rx="8"
                             ry="8"
-                            class="fill-primary-900"
+                            width="60"
+                            x="120"
+                            y="70"
                         />
 
                         <!-- Líneas en el documento -->
                         <rect
+                            fill="white"
+                            height="10"
+                            rx="2"
+                            width="60"
                             x="35"
                             y="45"
-                            width="60"
-                            height="10"
-                            rx="2"
-                            fill="white"
                         />
                         <rect
+                            fill="white"
+                            height="10"
+                            rx="2"
+                            width="50"
                             x="35"
                             y="65"
-                            width="50"
-                            height="10"
-                            rx="2"
-                            fill="white"
                         />
                         <rect
-                            x="35"
-                            y="85"
-                            width="40"
+                            fill="white"
                             height="10"
                             rx="2"
-                            fill="white"
+                            width="40"
+                            x="35"
+                            y="85"
                         />
 
                         <!-- Gráfico circular -->
-                        <circle cx="60" cy="120" r="20" fill="white" />
+                        <circle cx="60" cy="120" fill="white" r="20" />
                         <path
-                            d="M60 120 L60 100 A20 20 0 0 1 80 120 Z"
                             class="fill-primary-900"
+                            d="M60 120 L60 100 A20 20 0 0 1 80 120 Z"
                         />
 
                         <!-- Calculadora botones -->
                         <rect
-                            x="130"
-                            y="80"
-                            width="40"
+                            fill="white"
                             height="15"
                             rx="2"
-                            fill="white"
+                            width="40"
+                            x="130"
+                            y="80"
                         />
                         <rect
+                            fill="white"
+                            height="10"
+                            width="10"
                             x="130"
                             y="100"
-                            width="10"
-                            height="10"
-                            fill="white"
                         />
                         <rect
+                            fill="white"
+                            height="10"
+                            width="10"
                             x="145"
                             y="100"
-                            width="10"
-                            height="10"
-                            fill="white"
                         />
                         <rect
+                            fill="white"
+                            height="10"
+                            width="10"
                             x="160"
                             y="100"
-                            width="10"
-                            height="10"
-                            fill="white"
                         />
                         <rect
+                            fill="white"
+                            height="10"
+                            width="10"
                             x="130"
                             y="115"
-                            width="10"
-                            height="10"
-                            fill="white"
                         />
                         <rect
+                            fill="white"
+                            height="10"
+                            width="10"
                             x="145"
                             y="115"
-                            width="10"
-                            height="10"
-                            fill="white"
                         />
                         <rect
+                            fill="white"
+                            height="10"
+                            width="10"
                             x="160"
                             y="115"
-                            width="10"
-                            height="10"
-                            fill="white"
                         />
                         <rect
+                            fill="white"
+                            height="10"
+                            width="10"
                             x="130"
                             y="130"
-                            width="10"
-                            height="10"
-                            fill="white"
                         />
                         <rect
+                            fill="white"
+                            height="10"
+                            width="10"
                             x="145"
                             y="130"
-                            width="10"
-                            height="10"
-                            fill="white"
                         />
                         <rect
+                            fill="white"
+                            height="10"
+                            width="10"
                             x="160"
                             y="130"
-                            width="10"
-                            height="10"
-                            fill="white"
                         />
                     </svg>
                 </div>
@@ -227,8 +228,8 @@ const onFormSubmit = ({ valid }) => {
                 <div class="flex w-full flex-col gap-6">
                     <div class="flex w-full flex-col gap-2">
                         <label
-                            for="email"
                             class="leading-normal font-medium text-surface-900 dark:text-surface-0"
+                            for="email"
                             >Email Address</label
                         >
                         <InputText
@@ -241,27 +242,27 @@ const onFormSubmit = ({ valid }) => {
                             type="email"
                         />
                         <FormFieldMessage
-                            :field="$form.email"
                             :error="form.errors.email"
+                            :field="$form.email"
                         />
                     </div>
                     <div class="flex w-full flex-col gap-2">
                         <label
-                            for="password"
                             class="leading-normal font-medium text-surface-900 dark:text-surface-0"
+                            for="password"
                             >Password</label
                         >
                         <Password
                             id="password"
                             v-model="form.password"
-                            toggleMask
-                            name="password"
                             :feedback="false"
                             input-class="w-full!"
+                            name="password"
+                            toggleMask
                         />
                         <FormFieldMessage
-                            :field="$form.password"
                             :error="form.errors.password"
+                            :field="$form.password"
                         />
                     </div>
                     <div
@@ -274,14 +275,14 @@ const onFormSubmit = ({ valid }) => {
                                 :binary="true"
                             />
                             <label
-                                for="rememberme1"
                                 class="leading-normal text-surface-900 dark:text-surface-0"
+                                for="rememberme1"
                                 >Remember me</label
                             >
                         </div>
                         <Link
                             v-if="props.canResetPassword"
-                            href="/forgot-password"
+                            :href="request().url"
                             preserve-scroll
                             preserve-state
                         >

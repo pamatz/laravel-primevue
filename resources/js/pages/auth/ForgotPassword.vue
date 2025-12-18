@@ -6,7 +6,7 @@ import { email as passwordEmail } from '@/routes/password';
 import { forgotPasswordResolver } from '@/validation/forgotPassword';
 import { Head, useForm } from '@inertiajs/vue3';
 import { Form } from '@primevue/forms';
-import { InputText, Button } from 'primevue';
+import { Button, InputText, Message } from 'primevue';
 
 const props = defineProps<{
     status?: string;
