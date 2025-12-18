@@ -125,10 +125,9 @@ const toggleUserMenu = (event: MouseEvent): void => {
     >
         <!-- Drawer de navegación (solo móvil / tablet) -->
         <Drawer
-            v-if="!isDesktop"
             v-model:visible="sidebarOpen"
             :modal="true"
-            :showCloseIcon="true"
+            :showCloseIcon="false"
             position="left"
         >
             <div
@@ -170,53 +169,6 @@ const toggleUserMenu = (event: MouseEvent): void => {
                 </div>
             </nav>
         </Drawer>
-
-        <!-- Sidebar de navegación principal, de color y colapsable (solo desktop) -->
-        <aside
-            v-else
-            :class="[
-                'flex flex-col bg-primary-600 text-white shadow-lg transition-[width] duration-200',
-                sidebarOpen ? 'w-64' : 'w-20',
-            ]"
-        >
-            <div class="flex items-center gap-2 px-4 py-4">
-                <span
-                    class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-lg font-semibold uppercase"
-                >
-                    {{ appName.charAt(0) }}
-                </span>
-                <span v-if="sidebarOpen" class="truncate text-sm font-semibold">
-                    {{ appName }}
-                </span>
-            </div>
-
-            <nav class="mt-4 flex-1 space-y-4 px-2 text-xs font-medium">
-                <div v-for="section in navigation" :key="section.label">
-                    <p
-                        v-if="sidebarOpen"
-                        class="mb-2 px-3 text-[11px] font-semibold tracking-wide text-primary-100/80 uppercase"
-                    >
-                        {{ section.label }}
-                    </p>
-                    <Link
-                        v-for="item in section.items"
-                        :key="item.href"
-                        :href="item.href"
-                        :title="item.label"
-                        :class="[
-                            'flex items-center rounded-lg px-3 py-2 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none',
-                            sidebarOpen ? 'justify-start gap-3' : 'justify-center',
-                            isActive(item.href)
-                                ? 'bg-white/10 text-white'
-                                : 'text-primary-50/80',
-                        ]"
-                    >
-                        <i class="text-base" :class="item.icon"></i>
-                        <span v-if="sidebarOpen">{{ item.label }}</span>
-                    </Link>
-                </div>
-            </nav>
-        </aside>
 
         <!-- Contenido principal -->
         <div class="flex min-h-screen flex-1 flex-col">

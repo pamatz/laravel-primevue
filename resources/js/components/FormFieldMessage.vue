@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { Message } from 'primevue';
 
 interface FieldError {
     message?: string;

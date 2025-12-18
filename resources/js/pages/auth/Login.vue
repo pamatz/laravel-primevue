@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import AuthLayout from '@/layouts/AuthLayout.vue';
 import FormFieldMessage from '@/components/FormFieldMessage.vue';
 import { store } from '@/routes/login';
 import { loginResolver } from '@/validation/login';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { Form } from '@primevue/forms';
+import { Button, Checkbox, InputText, Message, Password } from 'primevue';
 
 const props = defineProps<{
     status?: string;
@@ -18,7 +18,6 @@ const initialValues = {
     remember: false,
 };
 
-// Inertia.js useForm para manejar envío y errores del backend
 const form = useForm({ ...initialValues });
 
 const onFormSubmit = ({ valid }) => {
@@ -31,113 +30,273 @@ const onFormSubmit = ({ valid }) => {
 </script>
 
 <template>
-    <AuthLayout
-        description="Ingresa tus credenciales para acceder a tu cuenta."
-        title="Inicia sesión"
-    >
-        <Head title="Login" />
-
-        <div v-if="props.status" class="mb-4">
-            <Message :life="5000" class="w-full" severity="success">
-                {{ props.status }}
-            </Message>
-        </div>
-
-        <Form
-            v-slot="$form"
-            :initialValues="initialValues"
-            :resolver="loginResolver"
-            class="flex flex-col gap-4"
-            @submit="onFormSubmit"
+    <Head title="Iniciar Sesión" />
+    <!--    <div class="topbar-actions">-->
+    <!--        <Button-->
+    <!--            type="button"-->
+    <!--            class="topbar-theme-button"-->
+    <!--            @click="toggleDarkMode"-->
+    <!--            text-->
+    <!--            rounded-->
+    <!--        >-->
+    <!--            <i-->
+    <!--                :class="[-->
+    <!--                    'pi',-->
+    <!--                    'pi',-->
+    <!--                    { 'pi-moon': isDarkMode, 'pi-sun': !isDarkMode },-->
+    <!--                ]"-->
+    <!--            />-->
+    <!--        </Button>-->
+    <!--        <div class="relative">-->
+    <!--            <Button-->
+    <!--                v-styleclass="{-->
+    <!--                    selector: '@next',-->
+    <!--                    enterFromClass: 'hidden',-->
+    <!--                    enterActiveClass: 'animate-scalein',-->
+    <!--                    leaveToClass: 'hidden',-->
+    <!--                    leaveActiveClass: 'animate-fadeout',-->
+    <!--                    hideOnOutsideClick: true,-->
+    <!--                }"-->
+    <!--                icon="pi pi-cog"-->
+    <!--                text-->
+    <!--                rounded-->
+    <!--                aria-label="Settings"-->
+    <!--            />-->
+    <!--            <AppConfig />-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <div class="px-6 py-20 md:px-20 lg:px-80 dark:bg-surface-950">
+        <div
+            class="mx-auto flex w-full max-w-lg flex-col gap-8 rounded-2xl bg-surface-0 p-8 shadow-sm md:p-12 dark:bg-surface-900"
         >
-            <div class="flex flex-col gap-2">
-                <label
-                    class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
-                    for="email"
-                >
-                    Correo electrónico
-                </label>
-                <InputText
-                    id="email"
-                    v-model="form.email"
-                    autocomplete="email"
-                    autofocus
-                    class="w-full"
-                    name="email"
-                    type="email"
-                />
-                <FormFieldMessage
-                    :field="$form.email"
-                    :error="form.errors.email"
-                />
-            </div>
+            <div class="flex flex-col items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <svg
+                        width="180"
+                        height="150"
+                        viewBox="20 30 160 120"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <rect
+                            x="20"
+                            y="30"
+                            width="90"
+                            height="120"
+                            rx="10"
+                            ry="10"
+                            class="fill-primary-500"
+                        />
+                        <rect
+                            x="120"
+                            y="70"
+                            width="60"
+                            height="80"
+                            rx="8"
+                            ry="8"
+                            class="fill-primary-900"
+                        />
 
-            <div class="flex flex-col gap-2">
-                <label
-                    class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
-                    for="password"
-                >
-                    Contraseña
-                </label>
-                <Password
-                    id="password"
-                    v-model="form.password"
-                    :feedback="false"
-                    autocomplete="current-password"
-                    class="w-full"
-                    inputClass="w-full"
-                    name="password"
-                    toggleMask
-                />
-                <FormFieldMessage
-                    :field="$form.password"
-                    :error="form.errors.password"
-                />
-            </div>
+                        <!-- Líneas en el documento -->
+                        <rect
+                            x="35"
+                            y="45"
+                            width="60"
+                            height="10"
+                            rx="2"
+                            fill="white"
+                        />
+                        <rect
+                            x="35"
+                            y="65"
+                            width="50"
+                            height="10"
+                            rx="2"
+                            fill="white"
+                        />
+                        <rect
+                            x="35"
+                            y="85"
+                            width="40"
+                            height="10"
+                            rx="2"
+                            fill="white"
+                        />
 
-            <div
-                class="flex items-center justify-between gap-4 text-sm text-neutral-700 dark:text-neutral-300"
-            >
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        id="remember"
-                        v-model="form.remember"
-                        binary
-                        inputId="remember"
-                        name="remember"
-                    />
-                    <label for="remember">Recordarme</label>
+                        <!-- Gráfico circular -->
+                        <circle cx="60" cy="120" r="20" fill="white" />
+                        <path
+                            d="M60 120 L60 100 A20 20 0 0 1 80 120 Z"
+                            class="fill-primary-900"
+                        />
+
+                        <!-- Calculadora botones -->
+                        <rect
+                            x="130"
+                            y="80"
+                            width="40"
+                            height="15"
+                            rx="2"
+                            fill="white"
+                        />
+                        <rect
+                            x="130"
+                            y="100"
+                            width="10"
+                            height="10"
+                            fill="white"
+                        />
+                        <rect
+                            x="145"
+                            y="100"
+                            width="10"
+                            height="10"
+                            fill="white"
+                        />
+                        <rect
+                            x="160"
+                            y="100"
+                            width="10"
+                            height="10"
+                            fill="white"
+                        />
+                        <rect
+                            x="130"
+                            y="115"
+                            width="10"
+                            height="10"
+                            fill="white"
+                        />
+                        <rect
+                            x="145"
+                            y="115"
+                            width="10"
+                            height="10"
+                            fill="white"
+                        />
+                        <rect
+                            x="160"
+                            y="115"
+                            width="10"
+                            height="10"
+                            fill="white"
+                        />
+                        <rect
+                            x="130"
+                            y="130"
+                            width="10"
+                            height="10"
+                            fill="white"
+                        />
+                        <rect
+                            x="145"
+                            y="130"
+                            width="10"
+                            height="10"
+                            fill="white"
+                        />
+                        <rect
+                            x="160"
+                            y="130"
+                            width="10"
+                            height="10"
+                            fill="white"
+                        />
+                    </svg>
                 </div>
-
-                <a
-                    v-if="props.canResetPassword"
-                    class="text-primary-600 dark:text-primary-400 text-sm font-medium hover:underline"
-                    href="/forgot-password"
-                >
-                    ¿Olvidaste tu contraseña?
-                </a>
+                <div class="flex w-full flex-col items-center gap-2">
+                    <div
+                        class="w-full text-center text-2xl leading-tight font-semibold text-surface-900 dark:text-surface-0"
+                    >
+                        {{ $page.props.name }}
+                    </div>
+                </div>
             </div>
 
-            <Button
-                :disabled="form.processing"
-                :loading="form.processing"
-                class="mt-2 w-full"
-                label="Iniciar sesión"
-                type="submit"
-            />
-
-            <p
-                v-if="props.canRegister"
-                class="mt-4 text-center text-sm text-neutral-700 dark:text-neutral-300"
+            <div v-if="props.status" class="mb-4">
+                <Message :life="5000" class="w-full" severity="success">
+                    {{ props.status }}
+                </Message>
+            </div>
+            <Form
+                v-slot="$form"
+                :initialValues="initialValues"
+                :resolver="loginResolver"
+                class="flex flex-col gap-4"
+                @submit="onFormSubmit"
             >
-                ¿No tienes una cuenta?
-                <a
-                    class="text-primary-600 dark:text-primary-400 font-medium hover:underline"
-                    href="/register"
-                >
-                    Crear una cuenta
-                </a>
-            </p>
-        </Form>
-    </AuthLayout>
+                <div class="flex w-full flex-col gap-6">
+                    <div class="flex w-full flex-col gap-2">
+                        <label
+                            for="email"
+                            class="leading-normal font-medium text-surface-900 dark:text-surface-0"
+                            >Email Address</label
+                        >
+                        <InputText
+                            id="email"
+                            v-model="form.email"
+                            autocomplete="email"
+                            autofocus
+                            class="w-full"
+                            name="email"
+                            type="email"
+                        />
+                        <FormFieldMessage
+                            :field="$form.email"
+                            :error="form.errors.email"
+                        />
+                    </div>
+                    <div class="flex w-full flex-col gap-2">
+                        <label
+                            for="password"
+                            class="leading-normal font-medium text-surface-900 dark:text-surface-0"
+                            >Password</label
+                        >
+                        <Password
+                            id="password"
+                            v-model="form.password"
+                            toggleMask
+                            name="password"
+                            :feedback="false"
+                            input-class="w-full!"
+                        />
+                        <FormFieldMessage
+                            :field="$form.password"
+                            :error="form.errors.password"
+                        />
+                    </div>
+                    <div
+                        class="flex w-full flex-col items-start justify-between gap-3 sm:flex-row sm:items-center sm:gap-0"
+                    >
+                        <div class="flex items-center gap-2">
+                            <Checkbox
+                                id="rememberme1"
+                                v-model="form.remember"
+                                :binary="true"
+                            />
+                            <label
+                                for="rememberme1"
+                                class="leading-normal text-surface-900 dark:text-surface-0"
+                                >Remember me</label
+                            >
+                        </div>
+                        <Link
+                            v-if="props.canResetPassword"
+                            href="/forgot-password"
+                            preserve-scroll
+                            preserve-state
+                        >
+                            ¿Olvidaste tu contraseña?
+                        </Link>
+                    </div>
+                </div>
+                <Button
+                    :disabled="form.processing"
+                    :loading="form.processing"
+                    class="mt-2 w-full"
+                    label="Iniciar sesión"
+                    type="submit"
+                />
+            </Form>
+        </div>
+    </div>
 </template>

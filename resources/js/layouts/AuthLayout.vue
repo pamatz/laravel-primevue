@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Card } from 'primevue';
 interface Props {
     title: string;
     description?: string;

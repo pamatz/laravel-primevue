@@ -1,20 +1,110 @@
 {
     "mcpServers": {
-        "laravel-boost": {
+        "laravel-boost-win": {
             "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\php84\\php.exe",
-            "args": [
-                "D:\\sites\\laravel-primevue\\artisan",
-                "boost:mcp"
-            ]
+            "args": ["artisan", "boost:mcp"]
         },
-        "herd": {
+        "herd-win": {
             "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\php84\\php.exe",
-            "args": [
-                "C:/Users/rdpam/.config/herd/bin/herd-mcp.phar"
-            ],
+            "args": ["C:/Users/rdpam/.config/herd/bin/herd-mcp.phar"],
             "env": {
                 "SITE_PATH": "D:\\sites\\laravel-primevue"
+            },
+            "working_directory": null
+        },
+        "Brave Search": {
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\nvm\\v25.2.0\\npx.cmd",
+            "args": [
+                "-y",
+                "@brave/brave-search-mcp-server",
+                "--transport",
+                "stdio"
+            ],
+            "env": {
+                "BRAVE_API_KEY": "BSAP_zsU-8Bq5fw9ibVFEKGqnDtV1SN"
             }
+        },
+        "Context7": {
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\nvm\\v25.2.0\\npx.cmd",
+            "args": ["-y", "@upstash/context7-mcp", "--transport", "stdio"]
+        },
+        "github": {
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\nvm\\v25.2.0\\npx.cmd",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-github",
+                "--transport",
+                "stdio"
+            ],
+            "env": {
+                "GITHUB_PERSONAL_ACCESS_TOKEN": "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"
+            }
+        },
+        "Memory": {
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-memory",
+                "--transport",
+                "stdio"
+            ],
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\nvm\\v25.2.0\\npx.cmd",
+            "env": {}
+        },
+        "MySQL": {
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\nvm\\v25.2.0\\npx.cmd",
+            "args": [
+                "-y",
+                "@benborla29/mcp-server-mysql",
+                "mcprunner",
+                "MYSQL_HOST\u003d127.0.0.1",
+                "MYSQL_PORT\u003d3306",
+                "MYSQL_USER\u003dadmin",
+                "MYSQL_PASS\u003dadmin",
+                "MYSQL_DB\u003dlaravel-primevue",
+                "ALLOW_INSERT_OPERATION\u003dtrue",
+                "ALLOW_UPDATE_OPERATION\u003dtrue",
+                "ALLOW_DELETE_OPERATION\u003dfalse",
+                "MYSQL_POOL_SIZE\u003d10",
+                "MYSQL_QUERY_TIMEOUT\u003d30000",
+                "MYSQL_CACHE_TTL\u003d60000",
+                "MYSQL_RATE_LIMIT\u003d100",
+                "MYSQL_MAX_QUERY_COMPLEXITY\u003d1000",
+                "MYSQL_SSL\u003dtrue",
+                "ENABLE_LOGGING\u003dtrue",
+                "MYSQL_LOG_LEVEL\u003dinfo",
+                "MYSQL_METRICS_ENABLED\u003dtrue",
+                "--transport",
+                "stdio"
+            ]
+        },
+        "Playwright": {
+            "args": ["-y", "@playwright/mcp@latest"],
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\nvm\\v25.2.0\\npx.cmd",
+            "env": {}
+        },
+        "puppeteer": {
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\nvm\\v25.2.0\\npx.cmd",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-puppeteer",
+                "--transport",
+                "stdio"
+            ],
+            "env": {}
+        },
+        "Sequential-thinking": {
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sequential-thinking",
+                "--transport",
+                "stdio"
+            ],
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\nvm\\v25.2.0\\npx.cmd",
+            "env": {}
+        },
+        "primevue": {
+            "args": ["-y", "@primevue/mcp", "--transport", "stdio"],
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\nvm\\v25.2.0\\npx.cmd"
         }
     }
 }

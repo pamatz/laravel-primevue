@@ -38,18 +38,6 @@ return [
     [
         'label' => 'Configuración',
         'items' => [
-            [
-                'label' => 'Perfil',
-                'href' => '/settings/profile',
-                'icon' => 'pi pi-user',
-                'permission' => null,
-            ],
-            [
-                'label' => 'Apariencia',
-                'href' => '/settings/appearance',
-                'icon' => 'pi pi-palette',
-                'permission' => null,
-            ],
         ],
     ],
 ];

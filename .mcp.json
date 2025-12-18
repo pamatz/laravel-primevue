@@ -1,12 +1,34 @@
 {
     "mcpServers": {
-        "laravel-boost": {
-            "command": "php",
+        "laravel-boost-win": {
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\php84\\php.exe",
             "args": ["artisan", "boost:mcp"]
+        },
+        "herd-win": {
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\php84\\php.exe",
+            "args": ["C:/Users/rdpam/.config/herd/bin/herd-mcp.phar"],
+            "env": {
+                "SITE_PATH": "D:\\sites\\laravel-primevue"
+            },
+            "working_directory": null
+        },
+        "Brave Search": {
+            "command": "C:\\Users\\rdpam\\.config\\herd\\bin\\nvm\\v25.2.0\\npx.cmd",
+            "args": [
+                "-y",
+                "@brave/brave-search-mcp-server",
+                "--transport",
+                "stdio"
+            ],
+            "env": {
+                "BRAVE_API_KEY": "BSAP_zsU-8Bq5fw9ibVFEKGqnDtV1SN"
+            }
         },
         "herd": {
             "command": "php",
-            "args": ["C:/Users/rdpam/.config/herd/bin/herd-mcp.phar"],
+            "args": [
+                "C:/Users/rdpam/.config/herd/bin/herd-mcp.phar"
+            ],
             "env": {
                 "SITE_PATH": "D:\\sites\\laravel-primevue"
             }
