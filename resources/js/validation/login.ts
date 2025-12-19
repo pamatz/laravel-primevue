@@ -6,7 +6,7 @@ const loginSchema = z.object({
     password: z
         .string('Ingresa tu contraseña.')
         .min(1, 'Ingresa tu contraseña.'),
-    remember: z.boolean().optional(),
+    remember: z.boolean().optional()
 });
 
 export const loginResolver = zodResolver(loginSchema);

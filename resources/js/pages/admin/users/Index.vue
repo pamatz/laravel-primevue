@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, router, useForm } from '@inertiajs/vue3';
-import { Button } from 'primevue';
+import { destroy } from '@/routes/admin/users';
+import { Head, useForm } from '@inertiajs/vue3';
+import { Button, Column, ConfirmDialog, DataTable, Dialog, InputText, Password, Select } from 'primevue';
+import { useConfirm } from 'primevue/useconfirm';
 import { computed, ref } from 'vue';
 
 interface Role {
@@ -40,12 +42,7 @@ const form = useForm({
 const openCreate = (): void => {
     isEditing.value = false;
     currentId.value = null;
-    form.reset({
-        name: '',
-        email: '',
-        password: '',
-        role_id: null,
-    });
+    form.reset();
     form.clearErrors();
     dialogVisible.value = true;
 };
@@ -53,12 +50,10 @@ const openCreate = (): void => {
 const openEdit = (user: User): void => {
     isEditing.value = true;
     currentId.value = user.id;
-    form.reset({
-        name: user.name,
-        email: user.email,
-        password: '',
-        role_id: user.role_id,
-    });
+    form.name = user.name;
+    form.email = user.email;
+    form.password = '';
+    form.role_id = user.role_id;
     form.clearErrors();
     dialogVisible.value = true;
 };
@@ -92,22 +87,39 @@ const onSubmit = (): void => {
     });
 };
 
-const remove = (user: User): void => {
-    if (!confirm(`¿Eliminar el usuario "${user.name}"?`)) {
-        return;
-    }
+const confirm = useConfirm();
 
-    router.delete(`/admin/users/${user.id}`);
+const remove = (user: User) => {
+    confirm.require({
+        message: `¿Eliminar el usuario "${user.name}"?`,
+        header: 'Confirmación',
+        icon: 'pi pi-exclamation-triangle',
+        rejectProps: {
+            label: 'Cancelar',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Eliminar'
+        },
+        accept: () => {
+            form.submit(destroy(user.id));
+        },
+        reject: () => {
+
+        }
+    });
 };
 
 const breadcrumbItems = computed(() => [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Usuarios', href: '/admin/users' },
+    { title: 'Usuarios', href: '/admin/users' }
 ]);
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems" title="Usuarios">
+        <ConfirmDialog></ConfirmDialog>
         <Head title="Usuarios" />
 
         <section class="space-y-6">
@@ -119,25 +131,15 @@ const breadcrumbItems = computed(() => [
                     </p>
                 </div>
 
-                <Button
-                    icon="pi pi-plus"
-                    label="Nuevo usuario"
-                    size="small"
-                    @click="openCreate"
-                />
+                <Button icon="pi pi-plus" label="Nuevo usuario" size="small" @click="openCreate" />
             </div>
 
             <div
                 class="card overflow-hidden rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
             >
-                <DataTable
-                    :rows="15"
-                    :value="props.users.data"
-                    class="text-sm"
-                    dataKey="id"
-                    responsiveLayout="stack"
-                >
-                    <Column field="name" header="Nombre" sortable />
+                <DataTable :rows="15" :value="props.users.data" class="text-sm" dataKey="id"
+                           responsiveLayout="stack">
+                    <Column field="name" header="Nombre" :sortable="true" />
                     <Column field="email" header="Correo" />
                     <Column header="Rol">
                         <template #body="{ data }">
@@ -179,32 +181,17 @@ const breadcrumbItems = computed(() => [
             <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-medium" for="name">Nombre</label>
-                    <InputText
-                        id="name"
-                        v-model="form.name"
-                        autocomplete="off"
-                        class="w-full"
-                    />
+                    <InputText id="name" v-model="form.name" autocomplete="off" class="w-full" />
                     <small v-if="form.errors.name" class="text-xs text-red-500">
                         {{ form.errors.name }}
                     </small>
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-medium" for="email"
-                        >Correo</label
-                    >
-                    <InputText
-                        id="email"
-                        v-model="form.email"
-                        autocomplete="off"
-                        class="w-full"
-                        type="email"
-                    />
-                    <small
-                        v-if="form.errors.email"
-                        class="text-xs text-red-500"
-                    >
+                    <label class="text-sm font-medium" for="email">Correo</label>
+                    <InputText id="email" v-model="form.email" autocomplete="off" class="w-full"
+                               type="email" />
+                    <small v-if="form.errors.email" class="text-xs text-red-500">
                         {{ form.errors.email }}
                     </small>
                 </div>
@@ -212,10 +199,7 @@ const breadcrumbItems = computed(() => [
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-medium" for="password">
                         Contraseña
-                        <span
-                            v-if="isEditing"
-                            class="text-xs text-neutral-500 dark:text-neutral-400"
-                        >
+                        <span v-if="isEditing" class="text-xs text-neutral-500 dark:text-neutral-400">
                             (déjalo vacío para no cambiarla)
                         </span>
                     </label>
@@ -227,17 +211,14 @@ const breadcrumbItems = computed(() => [
                         inputClass="w-full"
                         toggleMask
                     />
-                    <small
-                        v-if="form.errors.password"
-                        class="text-xs text-red-500"
-                    >
+                    <small v-if="form.errors.password" class="text-xs text-red-500">
                         {{ form.errors.password }}
                     </small>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-medium" for="role_id">Rol</label>
-                    <Dropdown
+                    <Select
                         id="role_id"
                         v-model="form.role_id"
                         :options="props.roles"
@@ -247,22 +228,13 @@ const breadcrumbItems = computed(() => [
                         optionValue="id"
                         placeholder="Selecciona un rol"
                     />
-                    <small
-                        v-if="form.errors.role_id"
-                        class="text-xs text-red-500"
-                    >
+                    <small v-if="form.errors.role_id" class="text-xs text-red-500">
                         {{ form.errors.role_id }}
                     </small>
                 </div>
 
                 <div class="mt-4 flex justify-end gap-2">
-                    <Button
-                        label="Cancelar"
-                        severity="secondary"
-                        text
-                        type="button"
-                        @click="closeDialog"
-                    />
+                    <Button label="Cancelar" severity="secondary" text type="button" @click="closeDialog" />
                     <Button
                         :label="isEditing ? 'Guardar cambios' : 'Crear usuario'"
                         :loading="form.processing"

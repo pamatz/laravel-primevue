@@ -7,8 +7,8 @@ import { Button, Card } from 'primevue';
 const breadcrumbs: BreadcrumbItemType[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
-    },
+        href: '/dashboard'
+    }
 ];
 </script>
 

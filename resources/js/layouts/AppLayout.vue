@@ -119,34 +119,36 @@ const toggleUserMenu = (event: MouseEvent): void => {
 
 <template>
     <div
-        class="flex min-h-screen bg-neutral-50 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-50"
+        class="flex min-h-screen bg-surface-50 text-surface-900 dark:bg-surface-900 dark:text-surface-50"
     >
         <!-- Drawer de navegación (solo móvil / tablet) -->
         <Drawer
             v-model:visible="sidebarOpen"
             :modal="true"
-            :showCloseIcon="false"
+            :showCloseIcon="true"
             position="left"
         >
-            <div
-                class="flex items-center gap-2 border-b border-neutral-200 px-4 py-4 dark:border-neutral-800"
-            >
+            <template #header>
+                <div
+                    class="w-full flex items-center gap-2 border-b border-surface-200 px-4 py-4 dark:border-surface-800"
+                >
                 <span
-                    class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary-600 text-lg font-semibold text-white uppercase"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary-600 text-lg font-semibold text-surface-0 dark:text-surface-950 uppercase"
                 >
                     {{ appName.charAt(0) }}
                 </span>
-                <span
-                    class="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50"
-                >
-                    {{ appName }}
+                    <span
+                        class="truncate text-sm font-semibold text-surface-900 dark:text-surface-50"
+                    >
+                    Empresa
                 </span>
-            </div>
+                </div>
+            </template>
 
-            <nav class="mt-4 space-y-4 px-2 text-sm font-medium">
+            <nav class="space-y-4 px-2 text-sm font-medium">
                 <div v-for="section in navigation" :key="section.label">
                     <p
-                        class="mb-2 px-3 text-[11px] font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400"
+                        class="mb-2 px-3 text-[11px] font-semibold tracking-wide text-surface-500 uppercase dark:text-surface-400"
                     >
                         {{ section.label }}
                     </p>
@@ -154,10 +156,10 @@ const toggleUserMenu = (event: MouseEvent): void => {
                         v-for="item in section.items"
                         :key="item.href"
                         :class="[
-                            'flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800',
+                            'flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-surface-100 dark:hover:bg-surface-800',
                             isActive(item.href)
-                                ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50'
-                                : 'text-neutral-700 dark:text-neutral-200',
+                                ? 'bg-surface-100 text-surface-900 dark:bg-surface-800 dark:text-surface-50'
+                                : 'text-surface-700 dark:text-surface-200',
                         ]"
                         :href="item.href"
                     >
@@ -172,7 +174,7 @@ const toggleUserMenu = (event: MouseEvent): void => {
         <div class="flex min-h-screen flex-1 flex-col">
             <!-- Navbar -->
             <header
-                class="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-neutral-200 bg-white/80 px-4 py-3 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-900/80"
+                class="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-surface-200 bg-surface-0/80 px-4 py-3 backdrop-blur-md dark:border-surface-800 dark:bg-surface-900/80"
             >
                 <div class="flex flex-1 items-center gap-3">
                     <Button
@@ -190,10 +192,10 @@ const toggleUserMenu = (event: MouseEvent): void => {
                         <nav
                             v-if="breadcrumbItems.length"
                             aria-label="Breadcrumb"
-                            class="mt-0.5 hidden items-center gap-1 text-xs text-neutral-500 md:flex dark:text-neutral-400"
+                            class="mt-0.5 hidden items-center gap-1 text-xs text-surface-500 md:flex dark:text-surface-400"
                         >
                             <Link
-                                class="flex items-center gap-1 hover:text-neutral-800 dark:hover:text-neutral-100"
+                                class="flex items-center gap-1 hover:text-surface-800 dark:hover:text-surface-100"
                                 href="/dashboard"
                             >
                                 <i class="pi pi-home text-xs" />
@@ -207,13 +209,13 @@ const toggleUserMenu = (event: MouseEvent): void => {
                                 <Link
                                     v-if="index < breadcrumbItems.length - 1"
                                     :href="item.href"
-                                    class="hover:text-neutral-800 dark:hover:text-neutral-100"
+                                    class="hover:text-surface-800 dark:hover:text-surface-100"
                                 >
                                     {{ item.title }}
                                 </Link>
                                 <span
                                     v-else
-                                    class="font-medium text-neutral-700 dark:text-neutral-100"
+                                    class="font-medium text-surface-700 dark:text-surface-100"
                                 >
                                     {{ item.title }}
                                 </span>
@@ -239,7 +241,7 @@ const toggleUserMenu = (event: MouseEvent): void => {
                     >
                         <Avatar
                             :label="userInitials"
-                            class="!bg-neutral-200 !text-xs dark:!bg-neutral-700"
+                            class="!bg-surface-200 !text-xs dark:!bg-surface-700"
                             shape="circle"
                         />
                         <span
@@ -248,7 +250,7 @@ const toggleUserMenu = (event: MouseEvent): void => {
                             {{ user?.name }}
                         </span>
                         <i
-                            class="pi pi-chevron-down text-xs text-neutral-500"
+                            class="pi pi-chevron-down text-xs text-surface-500"
                         />
                     </Button>
                 </div>
@@ -257,11 +259,11 @@ const toggleUserMenu = (event: MouseEvent): void => {
             <!-- Breadcrumb para móvil -->
             <div
                 v-if="breadcrumbItems.length"
-                class="border-b border-neutral-200 bg-white px-4 py-2 text-xs text-neutral-500 md:hidden dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
+                class="border-b border-surface-200 bg-surface-0 px-4 py-2 text-xs text-surface-500 md:hidden dark:border-surface-800 dark:bg-surface-900 dark:text-surface-400"
             >
                 <nav aria-label="Breadcrumb" class="flex items-center gap-1">
                     <Link
-                        class="flex items-center gap-1 hover:text-neutral-800 dark:hover:text-neutral-100"
+                        class="flex items-center gap-1 hover:text-surface-800 dark:hover:text-surface-100"
                         href="/dashboard"
                     >
                         <i class="pi pi-home text-xs" />
@@ -282,7 +284,7 @@ const toggleUserMenu = (event: MouseEvent): void => {
                         </span>
                         <span
                             v-else
-                            class="font-medium text-neutral-700 dark:text-neutral-100"
+                            class="font-medium text-surface-700 dark:text-surface-100"
                         >
                             {{ item.title }}
                         </span>
@@ -290,12 +292,12 @@ const toggleUserMenu = (event: MouseEvent): void => {
                 </nav>
             </div>
 
-            <main class="flex-1 bg-neutral-50 px-4 py-6 dark:bg-neutral-950">
+            <main class="flex-1 bg-surface-50 px-4 py-6 dark:bg-surface-950">
                 <slot />
             </main>
 
             <footer
-                class="border-t border-neutral-200 bg-white px-4 py-3 text-xs text-neutral-500 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
+                class="border-t border-surface-200 bg-surface-0 px-4 py-3 text-xs text-surface-500 dark:border-surface-800 dark:bg-surface-900 dark:text-surface-400"
             >
                 <div
                     class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"

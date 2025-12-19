@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, router, useForm, usePage } from '@inertiajs/vue3';
+import { destroy, index, update } from '@/routes/admin/permissions';
+import { Head, useForm } from '@inertiajs/vue3';
+import { Button, Column, ConfirmDialog, DataTable, Dialog, InputText, Textarea } from 'primevue';
+import { useConfirm } from 'primevue/useconfirm';
 import { computed, ref } from 'vue';
 
 interface Permission {
@@ -19,8 +22,6 @@ const props = defineProps<{
     permissions: PaginatedPermissions;
 }>();
 
-const page = usePage();
-
 const dialogVisible = ref(false);
 const isEditing = ref(false);
 const currentId = ref<number | null>(null);
@@ -29,7 +30,7 @@ const form = useForm({
     name: '',
     key: '',
     group: '',
-    description: '',
+    description: ''
 });
 
 const openCreate = (): void => {
@@ -43,12 +44,10 @@ const openCreate = (): void => {
 const openEdit = (permission: Permission): void => {
     isEditing.value = true;
     currentId.value = permission.id;
-    form.reset({
-        name: permission.name,
-        key: permission.key,
-        group: permission.group ?? '',
-        description: permission.description ?? '',
-    });
+    form.key = permission.key;
+    form.name = permission.name;
+    form.group = permission.group ?? '';
+    form.description = permission.description ?? '';
     form.clearErrors();
     dialogVisible.value = true;
 };
@@ -59,58 +58,72 @@ const closeDialog = (): void => {
 
 const onSubmit = (): void => {
     if (isEditing.value && currentId.value !== null) {
-        form.put(`/admin/permissions/${currentId.value}`, {
+        form.submit(update(currentId.value), {
             onSuccess: () => {
                 dialogVisible.value = false;
-            },
+            }
         });
 
         return;
     }
 
-    form.post('/admin/permissions', {
+    form.submit(index(), {
         onSuccess: () => {
             dialogVisible.value = false;
-        },
+        }
     });
 };
 
-const remove = (permission: Permission): void => {
-    if (!confirm(`¿Eliminar el permiso "${permission.name}"?`)) {
-        return;
-    }
+const confirm = useConfirm();
 
-    router.delete(`/admin/permissions/${permission.id}`);
+const remove = (permission: Permission): void => {
+    confirm.require({
+        message: `¿Eliminar el permiso "${permission.name}"?`,
+        header: 'Confirmación',
+        icon: 'pi pi-exclamation-triangle',
+        rejectProps: {
+            label: 'Cancelar',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Eliminar'
+        },
+        accept: () => {
+            form.delete(destroy(permission.id).url);
+        },
+        reject: () => {
+
+        }
+    });
 };
 
 const breadcrumbItems = computed(() => [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Permisos', href: '/admin/permissions' },
+    { title: 'Permisos', href: '/admin/permissions' }
 ]);
 </script>
 
 <template>
     <AppLayout title="Permisos" :breadcrumbs="breadcrumbItems">
         <Head title="Permisos" />
+        <ConfirmDialog></ConfirmDialog>
 
         <section class="space-y-6">
             <div class="flex items-center justify-between gap-4">
                 <div>
                     <h1 class="text-lg font-semibold">Permisos</h1>
-                    <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                    <p class="text-sm text-surface-500 dark:text-surface-400">
                         Administra los permisos que controlan el acceso a las distintas secciones.
                     </p>
                 </div>
 
-                <Button
-                    icon="pi pi-plus"
-                    label="Nuevo permiso"
-                    size="small"
-                    @click="openCreate"
-                />
+                <Button icon="pi pi-plus" label="Nuevo permiso" size="small" @click="openCreate" />
             </div>
 
-            <div class="card overflow-hidden rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+            <div
+                class="card overflow-hidden rounded-lg border border-surface-200 bg-surface-0 dark:border-surface-800 dark:bg-surface-900"
+            >
                 <DataTable
                     :value="props.permissions.data"
                     dataKey="id"
@@ -157,12 +170,7 @@ const breadcrumbItems = computed(() => [
             <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-medium" for="name">Nombre</label>
-                    <InputText
-                        id="name"
-                        v-model="form.name"
-                        class="w-full"
-                        autocomplete="off"
-                    />
+                    <InputText id="name" v-model="form.name" class="w-full" autocomplete="off" />
                     <small v-if="form.errors.name" class="text-xs text-red-500">
                         {{ form.errors.name }}
                     </small>
@@ -171,7 +179,7 @@ const breadcrumbItems = computed(() => [
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-medium" for="key">Clave</label>
                     <InputText id="key" v-model="form.key" class="w-full" autocomplete="off" />
-                    <small class="text-xs text-neutral-500 dark:text-neutral-400">
+                    <small class="text-xs text-surface-500 dark:text-surface-400">
                         Ejemplo: <code>users.view</code>, <code>roles.create</code>.
                     </small>
                     <small v-if="form.errors.key" class="text-xs text-red-500">
@@ -195,26 +203,15 @@ const breadcrumbItems = computed(() => [
 
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-medium" for="description">Descripción</label>
-                    <Textarea
-                        id="description"
-                        v-model="form.description"
-                        rows="3"
-                        autoResize
-                        class="w-full"
-                    />
+                    <Textarea id="description" v-model="form.description" rows="3" autoResize
+                              class="w-full" />
                     <small v-if="form.errors.description" class="text-xs text-red-500">
                         {{ form.errors.description }}
                     </small>
                 </div>
 
                 <div class="mt-4 flex justify-end gap-2">
-                    <Button
-                        type="button"
-                        label="Cancelar"
-                        severity="secondary"
-                        text
-                        @click="closeDialog"
-                    />
+                    <Button type="button" label="Cancelar" severity="secondary" text @click="closeDialog" />
                     <Button
                         type="submit"
                         :label="isEditing ? 'Guardar cambios' : 'Crear permiso'"

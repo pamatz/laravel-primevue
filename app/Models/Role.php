@@ -23,6 +23,11 @@ class Role extends Model
         'is_superadmin',
     ];
 
+    protected $casts = [
+        'is_superadmin' => 'boolean',
+    ];
+
+
     /**
      * Los permisos asociados a este rol.
      */

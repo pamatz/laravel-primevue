@@ -1,6 +1,19 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { destroy, index, update,store } from '@/routes/admin/roles';
+import { Head, useForm } from '@inertiajs/vue3';
+import {
+    Button,
+    Checkbox,
+    Column,
+    ConfirmDialog,
+    DataTable,
+    Dialog,
+    InputText,
+    MultiSelect,
+    Textarea
+} from 'primevue';
+import { useConfirm } from 'primevue/useconfirm';
 import { computed, ref } from 'vue';
 
 interface Permission {
@@ -37,33 +50,26 @@ const form = useForm({
     slug: '',
     description: '',
     is_superadmin: false,
-    permissions: [] as number[],
+    permissions: [] as number[]
 });
 
 const openCreate = (): void => {
     isEditing.value = false;
     currentId.value = null;
-    form.reset({
-        name: '',
-        slug: '',
-        description: '',
-        is_superadmin: false,
-        permissions: [],
-    });
+    form.reset();
     form.clearErrors();
     dialogVisible.value = true;
 };
 
 const openEdit = (role: Role): void => {
+    console.log(role)
     isEditing.value = true;
     currentId.value = role.id;
-    form.reset({
-        name: role.name,
-        slug: role.slug,
-        description: role.description ?? '',
-        is_superadmin: role.is_superadmin,
-        permissions: role.permissions.map((p) => p.id),
-    });
+    form.name = role.name;
+    form.slug = role.slug;
+    form.description = role.description ?? '';
+    form.is_superadmin = role.is_superadmin;
+    form.permissions = role.permissions.map((p) => p.id);
     form.clearErrors();
     dialogVisible.value = true;
 };
@@ -73,53 +79,63 @@ const closeDialog = (): void => {
 };
 
 const onSubmit = (): void => {
-    const payload = {
-        ...form.data(),
-        permissions: form.permissions,
-    };
-
     if (isEditing.value && currentId.value !== null) {
-        form.put(`/admin/roles/${currentId.value}`, {
-            data: payload,
+        form.submit(update(currentId.value), {
             onSuccess: () => {
                 dialogVisible.value = false;
-            },
+            }
         });
 
         return;
     }
 
-    form.post('/admin/roles', {
-        data: payload,
+    form.submit(store(), {
         onSuccess: () => {
             dialogVisible.value = false;
-        },
+        }
     });
 };
 
-const remove = (role: Role): void => {
-    if (!confirm(`¿Eliminar el rol "${role.name}"?`)) {
-        return;
-    }
+const confirm = useConfirm();
 
-    router.delete(`/admin/roles/${role.id}`);
+const remove = (role: Role) => {
+    confirm.require({
+        message: `¿Eliminar el rol "${role.name}"?`,
+        header: 'Confirmación',
+        icon: 'pi pi-exclamation-triangle',
+        rejectProps: {
+            label: 'Cancelar',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Eliminar'
+        },
+        accept: () => {
+            form.delete(destroy(role.id).url);
+        },
+        reject: () => {
+
+        }
+    });
 };
 
 const breadcrumbItems = computed(() => [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Roles', href: '/admin/roles' },
+    { title: 'Roles', href: '/admin/roles' }
 ]);
 </script>
 
 <template>
     <AppLayout title="Roles" :breadcrumbs="breadcrumbItems">
         <Head title="Roles" />
+        <ConfirmDialog></ConfirmDialog>
 
         <section class="space-y-6">
             <div class="flex items-center justify-between gap-4">
                 <div>
                     <h1 class="text-lg font-semibold">Roles</h1>
-                    <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                    <p class="text-sm text-surface-500 dark:text-surface-400">
                         Administra los roles del sistema y los permisos asociados a cada uno.
                     </p>
                 </div>
@@ -127,14 +143,11 @@ const breadcrumbItems = computed(() => [
                 <Button icon="pi pi-plus" label="Nuevo rol" size="small" @click="openCreate" />
             </div>
 
-            <div class="card overflow-hidden rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
-                <DataTable
-                    :value="props.roles.data"
-                    dataKey="id"
-                    :rows="10"
-                    responsiveLayout="stack"
-                    class="text-sm"
-                >
+            <div
+                class="card overflow-hidden rounded-lg border border-surface-200 bg-surface-0 dark:border-surface-800 dark:bg-surface-900"
+            >
+                <DataTable :value="props.roles.data" dataKey="id" :rows="10" responsiveLayout="stack"
+                           class="text-sm">
                     <Column field="name" header="Nombre" sortable />
                     <Column field="slug" header="Slug" />
                     <Column field="is_superadmin" header="Superadmin">
@@ -182,12 +195,7 @@ const breadcrumbItems = computed(() => [
             <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-medium" for="name">Nombre</label>
-                    <InputText
-                        id="name"
-                        v-model="form.name"
-                        class="w-full"
-                        autocomplete="off"
-                    />
+                    <InputText id="name" v-model="form.name" class="w-full" autocomplete="off" />
                     <small v-if="form.errors.name" class="text-xs text-red-500">
                         {{ form.errors.name }}
                     </small>
@@ -209,13 +217,8 @@ const breadcrumbItems = computed(() => [
 
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-medium" for="description">Descripción</label>
-                    <Textarea
-                        id="description"
-                        v-model="form.description"
-                        rows="3"
-                        autoResize
-                        class="w-full"
-                    />
+                    <Textarea id="description" v-model="form.description" rows="3" autoResize
+                              class="w-full" />
                     <small v-if="form.errors.description" class="text-xs text-red-500">
                         {{ form.errors.description }}
                     </small>
@@ -223,11 +226,7 @@ const breadcrumbItems = computed(() => [
 
                 <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
-                        <Checkbox
-                            id="is_superadmin"
-                            v-model="form.is_superadmin"
-                            :binary="true"
-                        />
+                        <Checkbox id="is_superadmin" v-model="form.is_superadmin" :binary="true" />
                         <label class="text-sm font-medium" for="is_superadmin">
                             Rol superadministrador (acceso total)
                         </label>
@@ -252,13 +251,7 @@ const breadcrumbItems = computed(() => [
                 </div>
 
                 <div class="mt-4 flex justify-end gap-2">
-                    <Button
-                        type="button"
-                        label="Cancelar"
-                        severity="secondary"
-                        text
-                        @click="closeDialog"
-                    />
+                    <Button type="button" label="Cancelar" severity="secondary" text @click="closeDialog" />
                     <Button
                         type="submit"
                         :label="isEditing ? 'Guardar cambios' : 'Crear rol'"

@@ -5,6 +5,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import Material from '@primeuix/themes/material';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import PrimeVue from 'primevue/config';
+import ConfirmationService from 'primevue/confirmationservice';
 import StyleClass from 'primevue/styleclass';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
@@ -17,23 +18,23 @@ createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) =>
         resolvePageComponent(
-            `./pages/${name}.vue`,
-            import.meta.glob<DefineComponent>('./pages/**/*.vue'),
-        ),
+            `./pages/${name}.vue`, import.meta.glob<DefineComponent>('./pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) });
 
         app.use(plugin);
         app.directive('styleclass', StyleClass);
+        app.use(ConfirmationService);
         app.use(PrimeVue, {
             theme: {
                 preset: Material,
                 options: {
-                    darkModeSelector: '.p-dark',
-                },
-            },
+                    darkModeSelector: '.p-dark'
+                }
+            }
         });
-        updateColors('primary', 'rose');
+        updateColors('primary', 'purple');
+        updateColors('surface', 'neutral');
         app.mount(el);
-    },
+    }
 });

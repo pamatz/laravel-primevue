@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import AuthLayout from '@/layouts/AuthLayout.vue';
 import FormFieldMessage from '@/components/FormFieldMessage.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import AuthLayout from '@/layouts/AuthLayout.vue';
 import { store } from '@/routes/password/confirm';
-import { Form } from '@primevue/forms';
 import { confirmPasswordResolver } from '@/validation/confirmPassword';
+import { Head, useForm } from '@inertiajs/vue3';
+import { Form } from '@primevue/forms';
 
 const initialValues = {
-    password: '',
+    password: ''
 };
 
 const form = useForm({ ...initialValues });
@@ -16,7 +16,7 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
     if (!valid) return;
 
     form.submit(store(), {
-        onFinish: () => form.reset('password'),
+        onFinish: () => form.reset('password')
     });
 };
 </script>
@@ -38,10 +38,7 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
         >
             <div class="space-y-6">
                 <div class="grid gap-2">
-                    <label
-                        for="password"
-                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
-                    >
+                    <label for="password" class="text-sm font-medium text-neutral-800 dark:text-neutral-100">
                         Password
                     </label>
                     <Password
@@ -56,10 +53,7 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
                         autofocus
                     />
 
-                    <FormFieldMessage
-                        :field="$form.password"
-                        :error="form.errors.password"
-                    />
+                    <FormFieldMessage :field="$form.password" :error="form.errors.password" />
                 </div>
 
                 <div class="flex items-center">

@@ -15,28 +15,25 @@ const props = defineProps<{
 const initialValues = {
     email: props.email,
     password: '',
-    password_confirmation: '',
+    password_confirmation: ''
 };
 
 const form = useForm({
     ...initialValues,
-    token: props.token,
+    token: props.token
 });
 
 const onFormSubmit = ({ valid }: { valid: boolean }) => {
     if (!valid) return;
 
     form.submit(update(), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
+        onFinish: () => form.reset('password', 'password_confirmation')
     });
 };
 </script>
 
 <template>
-    <AuthLayout
-        description="Please enter your new password below"
-        title="Reset password"
-    >
+    <AuthLayout description="Please enter your new password below" title="Reset password">
         <Head title="Reset password" />
 
         <Form
@@ -48,10 +45,7 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
         >
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <label
-                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
-                        for="email"
-                    >
+                    <label class="text-sm font-medium text-neutral-800 dark:text-neutral-100" for="email">
                         Email
                     </label>
                     <InputText
@@ -63,17 +57,11 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
                         readonly
                         type="email"
                     />
-                    <FormFieldMessage
-                        :error="form.errors.email"
-                        :field="$form.email"
-                    />
+                    <FormFieldMessage :error="form.errors.email" :field="$form.email" />
                 </div>
 
                 <div class="grid gap-2">
-                    <label
-                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
-                        for="password"
-                    >
+                    <label class="text-sm font-medium text-neutral-800 dark:text-neutral-100" for="password">
                         Password
                     </label>
                     <Password
@@ -89,10 +77,7 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
                         toggleMask
                         type="password"
                     />
-                    <FormFieldMessage
-                        :error="form.errors.password"
-                        :field="$form.password"
-                    />
+                    <FormFieldMessage :error="form.errors.password" :field="$form.password" />
                 </div>
 
                 <div class="grid gap-2">
@@ -114,10 +99,8 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
                         toggleMask
                         type="password"
                     />
-                    <FormFieldMessage
-                        :error="form.errors.password_confirmation"
-                        :field="$form.password_confirmation"
-                    />
+                    <FormFieldMessage :error="form.errors.password_confirmation"
+                                      :field="$form.password_confirmation" />
                 </div>
 
                 <Button

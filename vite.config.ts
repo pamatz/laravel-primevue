@@ -12,15 +12,15 @@ export default defineConfig({
         }),
         tailwindcss(),
         wayfinder({
-            formVariants: true,
+            formVariants: true
         }),
         vue({
             template: {
                 transformAssetUrls: {
                     base: null,
-                    includeAbsolute: false,
-                },
-            },
-        }),
-    ],
+                    includeAbsolute: false
+                }
+            }
+        })
+    ]
 });

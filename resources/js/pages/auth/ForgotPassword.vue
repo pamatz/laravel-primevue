@@ -13,7 +13,7 @@ const props = defineProps<{
 }>();
 
 const initialValues = {
-    email: '',
+    email: ''
 };
 
 const form = useForm({ ...initialValues });
@@ -22,16 +22,13 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
     if (!valid) return;
 
     form.submit(passwordEmail(), {
-        onFinish: () => form.reset('email'),
+        onFinish: () => form.reset('email')
     });
 };
 </script>
 
 <template>
-    <AuthLayout
-        description="Enter your email to receive a password reset link"
-        title="Forgot password"
-    >
+    <AuthLayout description="Enter your email to receive a password reset link" title="Forgot password">
         <Head title="Forgot password" />
 
         <div v-if="props.status" class="mb-4">
@@ -49,10 +46,7 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
                 @submit="onFormSubmit"
             >
                 <div class="flex flex-col gap-2">
-                    <label
-                        class="text-sm font-medium text-neutral-800 dark:text-neutral-100"
-                        for="email"
-                    >
+                    <label class="text-sm font-medium text-neutral-800 dark:text-neutral-100" for="email">
                         Correo electrónico
                     </label>
                     <InputText
@@ -64,10 +58,7 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
                         name="email"
                         type="email"
                     />
-                    <FormFieldMessage
-                        :error="form.errors.email"
-                        :field="$form.email"
-                    />
+                    <FormFieldMessage :error="form.errors.email" :field="$form.email" />
                 </div>
 
                 <div class="my-6 flex items-center justify-start">
@@ -85,12 +76,7 @@ const onFormSubmit = ({ valid }: { valid: boolean }) => {
 
             <div class="text-muted-foreground space-x-1 text-center text-sm">
                 <span>Or, return to</span>
-                <Button
-                    :href="login().url"
-                    as="a"
-                    label="log in"
-                    variant="link"
-                ></Button>
+                <Button :href="login().url" as="a" label="log in" variant="link"></Button>
             </div>
         </div>
     </AuthLayout>
