@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useLayout } from '@/composables/useLayout';
 
-const { primaryColors, surfaces, preset, primary, surface, isDarkMode, updateColors } = useLayout();
+const { primaryColors, surfaces, primary, surface, isDarkMode, updateColors } = useLayout();
 </script>
 
 <template>

@@ -14,7 +14,7 @@
     </testsuites>
     <source>
         <include>
-            <directory suffix=".php">app</directory>
+            <directory>app</directory>
         </include>
 
         <exclude>
@@ -29,11 +29,6 @@
             <directory>config</directory>
         </exclude>
     </source>
-    <coverage>
-        <report>
-            <crap4j outputFile="my-repot"/>
-        </report>
-    </coverage>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>

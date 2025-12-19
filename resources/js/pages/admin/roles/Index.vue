@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { destroy, index, update,store } from '@/routes/admin/roles';
+import { destroy, update,store } from '@/routes/admin/roles';
 import { Head, useForm } from '@inertiajs/vue3';
 import {
     Button,
@@ -148,7 +148,7 @@ const breadcrumbItems = computed(() => [
             >
                 <DataTable :value="props.roles.data" dataKey="id" :rows="10" responsiveLayout="stack"
                            class="text-sm">
-                    <Column field="name" header="Nombre" sortable />
+                    <Column field="name" header="Nombre" :sortable="true" />
                     <Column field="slug" header="Slug" />
                     <Column field="is_superadmin" header="Superadmin">
                         <template #body="{ data }">
