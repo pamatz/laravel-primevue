@@ -35,6 +35,16 @@ describe('Dashboard y menú dinámico', function () {
         );
     });
 
+    test('el dashboard se renderiza siempre con el componente Dashboard', function () {
+        $user = User::factory()->withoutTwoFactor()->create();
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Dashboard')
+        );
+    });
+
     test('usuario sin permiso no puede acceder a la vista de usuarios del admin', function () {
         $user = User::factory()->withoutTwoFactor()->create();
 

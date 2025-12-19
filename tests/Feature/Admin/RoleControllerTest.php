@@ -37,11 +37,40 @@ describe('RoleController', function () {
         $response->assertOk();
         $response->assertInertia(function ($page) {
             $page->component('admin/roles/Index')
-                ->where('roles.data', function ($roles) {
-                    return is_array($roles);
+                ->has('roles.data')
+                ->has('permissions');
+        });
+    });
+
+    test('listado de roles expone contrato mínimo para el frontend', function () {
+        $permission = Permission::factory()->rolesView()->create();
+        $user = User::factory()->withoutTwoFactor()->create();
+
+        $roleWithPermission = Role::factory()->create();
+        $roleWithPermission->permissions()->attach($permission);
+        $user->update(['role_id' => $roleWithPermission->id]);
+
+        // Creamos algunos roles y permisos adicionales
+        Role::factory()->count(3)->create();
+        Permission::factory()->count(3)->create();
+
+        $response = $this->actingAs($user)->get(route('admin.roles.index'));
+
+        $response->assertInertia(function (\Inertia\Testing\AssertableInertia $page) {
+            $page->component('admin/roles/Index')
+                ->has('roles.data')
+                ->where('roles.per_page', 10)
+                ->where('roles.total', fn ($total) => $total >= 1)
+                ->has('roles.data.0', function (\Inertia\Testing\AssertableInertia $role) {
+                    $role->has('id')->has('name')->has('slug')->has('is_superadmin')->etc();
                 })
-                ->where('permissions', function ($permissions) {
-                    return is_array($permissions);
+                ->has('permissions', function (\Inertia\Testing\AssertableInertia $permissions) {
+                    $permissions->each(fn (\Inertia\Testing\AssertableInertia $permission) => $permission
+                        ->has('id')
+                        ->has('name')
+                        ->has('key')
+                        ->etc()
+                    );
                 });
         });
     });
@@ -181,7 +210,7 @@ describe('RoleController', function () {
 
         $response->assertRedirect();
         $newRole = Role::where('name', 'Super Rol')->first();
-        $this->assertTrue($newRole->is_superadmin);
+        $this->assertTrue((bool) $newRole->is_superadmin);
     });
 
     /**

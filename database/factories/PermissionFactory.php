@@ -16,7 +16,7 @@ class PermissionFactory extends Factory
      */
     public function definition(): array
     {
-        $resource = fake()->word();
+        $resource = fake()->unique()->word();
         $action = fake()->randomElement(['view', 'create', 'update', 'delete']);
 
         return [

@@ -11,6 +11,10 @@ test('email verification screen can be rendered', function () {
     $response = $this->actingAs($user)->get(route('verification.notice'));
 
     $response->assertStatus(200);
+    $response->assertInertia(function (\Inertia\Testing\AssertableInertia $page) {
+        $page->component('auth/VerifyEmail')
+            ->has('status');
+    });
 });
 
 test('email can be verified', function () {

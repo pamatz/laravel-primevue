@@ -37,8 +37,29 @@ describe('PermissionController', function () {
         $response->assertOk();
         $response->assertInertia(function ($page) {
             $page->component('admin/permissions/Index')
-                ->where('permissions.data', function ($permissions) {
-                    return is_array($permissions);
+                ->has('permissions.data');
+        });
+    });
+
+    test('listado de permisos expone contrato mínimo para el frontend', function () {
+        $permission = Permission::factory()->permissionsView()->create();
+        $user = User::factory()->withoutTwoFactor()->create();
+
+        $role = Role::factory()->create();
+        $role->permissions()->attach($permission);
+        $user->update(['role_id' => $role->id]);
+
+        Permission::factory()->count(5)->create();
+
+        $response = $this->actingAs($user)->get(route('admin.permissions.index'));
+
+        $response->assertInertia(function (\Inertia\Testing\AssertableInertia $page) {
+            $page->component('admin/permissions/Index')
+                ->has('permissions.data')
+                ->where('permissions.per_page', 15)
+                ->where('permissions.total', fn ($total) => $total >= 1)
+                ->has('permissions.data.0', function (\Inertia\Testing\AssertableInertia $permission) {
+                    $permission->has('id')->has('name')->has('key')->etc();
                 });
         });
     });

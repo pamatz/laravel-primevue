@@ -29,7 +29,6 @@ describe('UserController', function () {
 
         $role = Role::factory()->create();
         $role->permissions()->attach($permission);
-
         $user->update(['role_id' => $role->id]);
 
         $response = $this->actingAs($user)->get(route('admin.users.index'));
@@ -37,11 +36,34 @@ describe('UserController', function () {
         $response->assertOk();
         $response->assertInertia(function ($page) {
             $page->component('admin/users/Index')
-                ->where('users.data', function ($users) {
-                    return is_array($users);
+                ->has('users.data')
+                ->has('roles');
+        });
+    });
+
+    test('listado de usuarios expone contrato mínimo para el frontend', function () {
+        $permission = Permission::factory()->usersView()->create();
+        $user = User::factory()->withoutTwoFactor()->create();
+
+        $role = Role::factory()->create();
+        $role->permissions()->attach($permission);
+        $user->update(['role_id' => $role->id]);
+
+        // Creamos algunos usuarios adicionales para poblar el listado
+        User::factory()->withoutTwoFactor()->count(3)->create();
+
+        $response = $this->actingAs($user)->get(route('admin.users.index'));
+
+        $response->assertInertia(function (\Inertia\Testing\AssertableInertia $page) {
+            $page->component('admin/users/Index')
+                ->has('users.data')
+                ->where('users.per_page', 15)
+                ->where('users.total', fn ($total) => $total >= 1)
+                ->has('users.data.0', function (\Inertia\Testing\AssertableInertia $user) {
+                    $user->has('id')->has('name')->has('email')->etc();
                 })
-                ->where('roles', function ($roles) {
-                    return is_array($roles);
+                ->has('roles', function (\Inertia\Testing\AssertableInertia $roles) {
+                    $roles->each(fn (\Inertia\Testing\AssertableInertia $role) => $role->has('id')->has('name')->etc());
                 });
         });
     });
