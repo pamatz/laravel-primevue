@@ -11,6 +11,12 @@ interface FormFieldState {
     error?: FieldError | null;
 }
 
+// Contrato de este componente:
+// - Prioriza siempre field.error.message sobre el prop error cuando ambos existen.
+// - Soporta error como string o como arreglo de strings (usa el primer elemento del arreglo).
+// - Muestra el mensaje si el campo es inválido (invalid) o si hay cualquier mensaje de error calculado.
+// - No debe renderizar mensajes vacíos cuando no hay errores disponibles.
+// Estos comportamientos están protegidos por tests en resources/js/components/__tests__/FormFieldMessage.spec.ts.
 const props = defineProps<{
     field?: FormFieldState | null;
     error?: string | string[] | null;
